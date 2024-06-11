@@ -1,1 +1,1 @@
-# AMP-Peptide-Hierarchical-Graph-NN
+# Hierarchical-Graph-NN
