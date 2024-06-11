@@ -1,0 +1,79 @@
+AmberLite==22.0
+AmberUtils==21.0
+backcall @ file:///home/ktietz/src/ci/backcall_1611930011877/work
+biopython @ file:///tmp/build/80754af9/biopython_1632738057617/work
+Bottleneck @ file:///opt/conda/conda-bld/bottleneck_1657175564434/work
+brotlipy==0.7.0
+certifi==2023.7.22
+cffi @ file:///croot/cffi_1670423208954/work
+charset-normalizer @ file:///tmp/build/80754af9/charset-normalizer_1630003229654/work
+cryptography @ file:///croot/cryptography_1677533068310/work
+cycler @ file:///home/conda/feedstock_root/build_artifacts/cycler_1635519461629/work
+debugpy @ file:///tmp/build/80754af9/debugpy_1637091426235/work
+decorator @ file:///opt/conda/conda-bld/decorator_1643638310831/work
+entrypoints @ file:///tmp/build/80754af9/entrypoints_1649908585034/work
+fonttools==4.25.0
+idna @ file:///croot/idna_1666125576474/work
+ipykernel @ file:///opt/conda/conda-bld/ipykernel_1662361798230/work
+ipython @ file:///tmp/abs_94gruux8u8/croots/recipe/ipython_1659529858706/work
+jedi @ file:///tmp/build/80754af9/jedi_1644299024593/work
+Jinja2 @ file:///croot/jinja2_1666908132255/work
+joblib @ file:///croot/joblib_1666298844297/work
+jupyter_client @ file:///croot/jupyter_client_1671703053786/work
+jupyter_core @ file:///opt/conda/conda-bld/jupyter_core_1664917302524/work
+kiwisolver @ file:///croot/kiwisolver_1672387140495/work
+MarkupSafe @ file:///opt/conda/conda-bld/markupsafe_1654597864307/work
+matplotlib @ file:///home/conda/feedstock_root/build_artifacts/matplotlib-suite_1661439848456/work
+matplotlib-inline @ file:///opt/conda/conda-bld/matplotlib-inline_1662014470464/work
+mkl-fft==1.3.1
+mkl-random @ file:///tmp/build/80754af9/mkl_random_1626179032232/work
+mkl-service==2.4.0
+MMPBSA.py==16.0
+munkres==1.1.4
+nest-asyncio @ file:///croot/nest-asyncio_1672387112409/work
+numexpr @ file:///croot/numexpr_1668713893690/work
+numpy @ file:///opt/conda/conda-bld/numpy_and_numpy_base_1653915516269/work
+packaging @ file:///croot/packaging_1671697413597/work
+packmol-memgen==1.2.3rc0
+pandas==1.3.5
+ParmEd==3.4.1
+parso @ file:///opt/conda/conda-bld/parso_1641458642106/work
+pdb4amber==22.0
+pexpect @ file:///tmp/build/80754af9/pexpect_1605563209008/work
+pickleshare @ file:///tmp/build/80754af9/pickleshare_1606932040724/work
+Pillow==9.4.0
+ply==3.11
+prompt-toolkit @ file:///croot/prompt-toolkit_1672387306916/work
+psutil @ file:///opt/conda/conda-bld/psutil_1656431268089/work
+ptyprocess @ file:///tmp/build/80754af9/ptyprocess_1609355006118/work/dist/ptyprocess-0.7.0-py2.py3-none-any.whl
+pycparser @ file:///tmp/build/80754af9/pycparser_1636541352034/work
+Pygments @ file:///opt/conda/conda-bld/pygments_1644249106324/work
+pyMSMT==22.0
+pyOpenSSL @ file:///croot/pyopenssl_1677607685877/work
+pyparsing @ file:///opt/conda/conda-bld/pyparsing_1661452539315/work
+PyQt5-sip==12.11.0
+PySocks @ file:///tmp/build/80754af9/pysocks_1594394576006/work
+python-dateutil @ file:///tmp/build/80754af9/python-dateutil_1626374649649/work
+pytraj==2.0.6
+pytz @ file:///croot/pytz_1671697431263/work
+pyzmq @ file:///opt/conda/conda-bld/pyzmq_1657724186960/work
+requests @ file:///opt/conda/conda-bld/requests_1657734628632/work
+sander==22.0
+scikit-learn @ file:///tmp/build/80754af9/scikit-learn_1642601761909/work
+scipy @ file:///opt/conda/conda-bld/scipy_1661390393401/work
+sip @ file:///tmp/abs_44cd77b_pu/croots/recipe/sip_1659012365470/work
+six @ file:///tmp/build/80754af9/six_1644875935023/work
+threadpoolctl @ file:///Users/ktietz/demo/mc3/conda-bld/threadpoolctl_1629802263681/work
+toml @ file:///home/conda/feedstock_root/build_artifacts/toml_1604308577558/work
+torch==1.13.1
+torch-geometric @ file:///usr/share/miniconda/envs/test/conda-bld/pyg_1690989686626/work
+torch-scatter @ file:///usr/share/miniconda/envs/test/conda-bld/pytorch-scatter_1678970450860/work
+torchaudio==0.13.1
+torchmetrics @ file:///home/conda/feedstock_root/build_artifacts/torchmetrics_1678720682204/work
+torchvision==0.14.1
+tornado @ file:///home/conda/feedstock_root/build_artifacts/tornado_1656937818679/work
+tqdm @ file:///opt/conda/conda-bld/tqdm_1664392687731/work
+traitlets @ file:///croot/traitlets_1671143879854/work
+typing_extensions @ file:///tmp/abs_ben9emwtky/croots/recipe/typing_extensions_1659638822008/work
+urllib3 @ file:///croot/urllib3_1673575502006/work
+wcwidth @ file:///Users/ktietz/demo/mc3/conda-bld/wcwidth_1629357192024/work
