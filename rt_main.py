@@ -64,7 +64,7 @@ for name_dataset in datasets:
     # Split the dataset into training and validation sets with a specified ratio.
     training_validation_datataset = datasets[name_dataset]
     
-    size_training_dataset = 0.80
+    size_training_dataset = 0.90
     size_validation_dataset = 1 - size_training_dataset
     n_training = int(len(training_validation_datataset) * size_training_dataset)
     n_validation = len(training_validation_datataset) - n_training
@@ -72,7 +72,7 @@ for name_dataset in datasets:
     training_set, validation_set = torch.utils.data.random_split(training_validation_datataset, [n_training, n_validation], generator=torch.Generator().manual_seed(42))
     
     # Create DataLoader objects for training and validation.
-    batch_size = 30
+    batch_size = 25
     train_dataloader = DataLoader(training_set, batch_size, shuffle=True)
     val_dataloader = DataLoader(validation_set, batch_size, shuffle=True)
     
@@ -94,7 +94,7 @@ for name_dataset in datasets:
     hidden_dim_nn_2 = 250  
     hidden_dim_nn_3 = 100
     
-    hidden_dim_gat_0 = 20
+    hidden_dim_gat_0 = 15
     
     hidden_dim_fcn_1 = 100
     hidden_dim_fcn_2 = 50
@@ -339,6 +339,5 @@ for name_dataset in datasets:
     df.to_csv('results/RT/{}_dataset_results.csv'.format(name_dataset), index=False)
 
 print('////////////// Done//////////////')
-
 
 # %%
