@@ -1,0 +1,30 @@
+Metric,Value
+number_features,19.0
+num_edge_features,13.0
+initial_dim_gcn ,19.0
+edge_dim_feature,13.0
+hidden_dim_nn_1 ,500.0
+hidden_dim_nn_2 ,250.0
+hidden_dim_nn_3 ,100.0
+hidden_dim_gat_0,15.0
+hidden_dim_fcn_1 ,100.0
+hidden_dim_fcn_2 ,50.0
+hidden_dim_fcn_3 ,10.0
+training_test_percentage %,90.0
+batch_size,25.0
+learning_rate,0.001
+number_of_epochs,100.0
+r2_train,0.9916500949384527
+r_train,0.9959003324531095
+mae_train,0.45088762044906616
+mse_train,0.598880410194397
+rmse_train,0.7738736396818262
+r2_validation,0.9869387900066948
+r_validation,0.9934731750789749
+mae_validation,0.5526955127716064
+mse_validation,0.74540776014328
+rmse_validation,0.8633700018782677
+time_preprocessing,389.5282842278481
+time_training,258.48404000202817
+time_prediction,1.1058135151863098
+total_time,649.118666223685
