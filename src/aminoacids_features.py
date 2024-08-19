@@ -37,33 +37,9 @@ def get_aminoacid_features(): #TODO remplazar aca por sequence_list para tener l
         logp_amino.extend([round(Crippen.MolLogP(amino_mol), 4)])
         atoms_amino.extend([round(float(amino_mol.GetNumAtoms()), 4)])
     
-    #set_wt_amino = list(set(wt_amino))
-    #codificador_wt_amino = OneHotEncoder()
-    #codificador_wt_amino.fit(np.array(set_wt_amino).reshape(-1, 1))
-
     set_aromaticity_amino = list(set(aromaticity_amino))
     codificador_aromaticity_amino = OneHotEncoder()
     codificador_aromaticity_amino.fit(np.array(set_aromaticity_amino).reshape(-1, 1))
-
-    #set_hydrophobicity_amino = list(set(hydrophobicity_amino))
-    #codificador_hydrophobicity_amino = OneHotEncoder()
-    #codificador_hydrophobicity_amino.fit(np.array(set_hydrophobicity_amino).reshape(-1, 1))
-
-    #set_net_charge_amino = list(set(net_charge_amino))
-    #codificador_net_charge_amino = OneHotEncoder()
-    #codificador_net_charge_amino.fit(np.array(set_net_charge_amino).reshape(-1, 1))
-
-    #set_p_iso_amino = list(set(p_iso_amino))
-    #codificador_p_iso_amino = OneHotEncoder()
-    #codificador_p_iso_amino.fit(np.array(set_p_iso_amino).reshape(-1, 1))
-
-    #set_logp_amino = list(set(logp_amino))
-    #codificador_logp_amino = OneHotEncoder()
-    #codificador_logp_amino.fit(np.array(set_logp_amino).reshape(-1, 1))
-
-    #set_atoms_amino = list(set(atoms_amino))
-    #codificador_atoms_amino = OneHotEncoder()
-    #codificador_atoms_amino.fit(np.array(set_atoms_amino).reshape(-1, 1)) 
     
     aminoacids_features_dict = defaultdict(list)
     

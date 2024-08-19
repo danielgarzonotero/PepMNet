@@ -11,19 +11,22 @@ from src.aminoacids_features import get_aminoacid_features
 class GeoDatasetBase_1(InMemoryDataset):
     def __init__(self, root, raw_name, index_x, index_y, transform=None, pre_transform=None, **kwargs):
         self.filename = raw_name  # La ruta completa ya se proporciona
+        
         self.df = pd.read_csv(self.filename)
         self.x = self.df[self.df.columns[index_x]].values
         self.y = self.df[self.df.columns[index_y]].values 
         
+        #self.df_samples = pd.read_csv('data/RT/sample_sequences.csv', header=None)  # 'header=0' es opcional si ya hay un encabezado
+        #self.samples = self.df_samples.iloc[:, index_x].values 
         
         super(GeoDatasetBase_1, self).__init__(root=os.path.join(root, f'{raw_name.split(".")[0]}_processed'), transform=transform, pre_transform=pre_transform, **kwargs)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.data, self.slices = torch.load(self.processed_paths[0], map_location= 'cuda:0' if torch.cuda.is_available() else 'cpu')
 
     def process(self):
         data_list = []
         cc = 0
         
-        node_features_dict, edge_features_dict = get_features(self.x)
+        node_features_dict, edge_features_dict = get_features()
         aminoacids_ft_dict = get_aminoacid_features()
         
         device_info_instance = device_info()
@@ -63,10 +66,10 @@ class GeoDatasetBase_2(InMemoryDataset):
         self.x = self.df[self.df.columns[index_x]].values
         
         super(GeoDatasetBase_2, self).__init__(root=os.path.join(root, f'{raw_name.split(".")[0]}_processed'), transform=transform, pre_transform=pre_transform, **kwargs)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.data, self.slices = torch.load(self.processed_paths[0], map_location= 'cuda:0' if torch.cuda.is_available() else 'cpu')
 
     def process(self):
-        node_ft_dict, edge_ft_dict = get_features(self.x)
+        node_ft_dict, edge_ft_dict = get_features()
         data_list = []
         cc = 0
         aminoacids_ft_dict = get_aminoacid_features()

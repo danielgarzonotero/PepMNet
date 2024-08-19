@@ -1,3 +1,4 @@
+
 #%%
 import time
 import matplotlib.pyplot as plt
@@ -41,7 +42,6 @@ datasets = [
             'xbridge_amide',
             'misc_dia'
             ]
-
 
 for name_dataset in datasets:
     if name_dataset in ['hela_mod', 'yeast_unmod', 'misc_dia']:
@@ -166,8 +166,7 @@ for name_dataset in datasets:
     # ////////////// Testing Section //////////////:
     
     # Plotting Loss Curves:
-    # Configure font and plot training and validation loss curves.
-    #plt.rcParams['font.family'] = 'DejaVu Serif'  
+    # Configure font and plot training and validation loss curves. 
     plt.plot(train_losses, label='Training Loss', color='darkorange', linewidth=2.5) 
     plt.plot(val_losses, label='Validation Loss', color='seagreen', linewidth=2.5)  
     plt.legend(fontsize=16) 
@@ -206,18 +205,17 @@ for name_dataset in datasets:
     rmse_train = sqrt(mse_train)
     
     # Visualization: Scatter Plot for Training Set:
-    # Plot a scatter plot of true vs. predicted values on the training set.
-    #plt.rcParams['font.family'] = 'DejaVu Serif'  
+    # Plot a scatter plot of true vs. predicted values on the training set. 
     plt.figure(figsize=(5, 5), dpi=300)
     plt.scatter(target_all_train.cpu(), pred_all_train.cpu(), alpha=0.3, color='steelblue')
     plt.plot([min(target_all_train.cpu()), max(target_all_train.cpu())], [min(target_all_train.cpu()), max(target_all_train.cpu())], color='steelblue', ls="-", alpha=0.7, linewidth=3.5)
     plt.xlim([min(target_all_train.cpu()), max(target_all_train.cpu())])
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.title(f'Scatter Plot Training Set\n{name_dataset} Dataset', fontsize=18, pad=30)
-    plt.xlabel(f"True Retention Time ({time_unit})", fontsize=14, labelpad=10)
-    plt.ylabel(f"Predicted Retention Time ({time_unit})", fontsize=14, labelpad=10)
-    plt.xticks(fontsize=10)
-    plt.yticks(fontsize=10)
+    plt.xlabel(f"True Retention Time ({time_unit})", fontsize=18, labelpad=10)
+    plt.ylabel(f"Predicted Retention Time ({time_unit})", fontsize=18, labelpad=10)
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
     plt.savefig(f'results/RT/{name_dataset}_scatter_training.png', format="png", dpi=300, bbox_inches='tight')
     plt.show()
     
@@ -254,10 +252,10 @@ for name_dataset in datasets:
     plt.xlim([min(target_all_validation.cpu()), max(target_all_validation.cpu())])
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.title(f'Scatter Plot Validation Set\n{name_dataset} Dataset', fontsize=18, pad=30)
-    plt.xlabel(f"True Retention Time ({time_unit})", fontsize=14, labelpad=10)
-    plt.ylabel(f"Predicted Retention Time ({time_unit})", fontsize=14, labelpad=10)
-    plt.xticks(fontsize=10)
-    plt.yticks(fontsize=10)
+    plt.xlabel(f"True Retention Time ({time_unit})", fontsize=18, labelpad=10)
+    plt.ylabel(f"Predicted Retention Time ({time_unit})", fontsize=18, labelpad=10)
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
     plt.savefig(f'results/RT/{name_dataset}_scatter_validation.png', format="png", dpi=300, bbox_inches='tight')
     plt.show()
     

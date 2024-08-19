@@ -37,11 +37,11 @@ class rt_GCN_Geo(torch.nn.Module):
                                 aggr='add')
         
         #self.readout = aggr.SumAggregation()
-        self.readout_atom = AttentionReadoutAtom(in_dim=hidden_dim_nn_3)
+        self.readout_atom = read_out_atom(in_dim=hidden_dim_nn_3)
         
         #The 7 and 24 comes from the four amino acid features and blosum62 matrix that were concatenated,  95+24
         self.nn_gat_1 = ARMAConv(hidden_dim_nn_3+8, hidden_dim_gat_1, num_stacks = 3, dropout=0, num_layers=7, shared_weights = False ) 
-        self.readout_aminoacid = AttentionReadoutAminoAcid(in_dim=hidden_dim_gat_1)
+        self.readout_aminoacid = read_out_amino_acid(in_dim=hidden_dim_gat_1)
         
         #The 7 comes from the four peptides features that were concatenated, +7
         self.linear1 = nn.Linear(hidden_dim_gat_1, hidden_dim_fcn_1)
@@ -86,7 +86,6 @@ class rt_GCN_Geo(torch.nn.Module):
             
             # getting amino acids representation from atom features
             xi = self.readout_atom(xi, monomer_labels_i)
-            #xi = scatter(xi, monomer_labels_i, dim=0, reduce="sum")
             
             xi = torch.cat((xi, aminoacids_features_i), dim=1)
             
@@ -122,26 +121,19 @@ class rt_GCN_Geo(torch.nn.Module):
         return p.view(-1)
 
 
-class AttentionReadoutAminoAcid(nn.Module):
+class read_out_amino_acid(nn.Module):
     def __init__(self, in_dim):
-        super(AttentionReadoutAminoAcid, self).__init__()
-        self.attention = nn.Linear(in_dim, 1)
+        super(read_out_amino_acid, self).__init__()
         self.readout = aggr.SumAggregation()
 
     def forward(self, x):
-        #attn_weights = F.softmax(self.attention(x), dim=0)
-        #weighted_x = x * attn_weights
         return self.readout(x)
     
-class AttentionReadoutAtom(nn.Module):
+class read_out_atom(nn.Module):
     def __init__(self, in_dim):
-        super(AttentionReadoutAtom, self).__init__()
-        self.attention = nn.Linear(in_dim, 1)
+        super(read_out_atom, self).__init__()
         
     def forward(self, x, monomer_labels_i):
-        #attn_weights = F.softmax(self.attention(x), dim=0)
-        #weighted_x = x * attn_weights
-        
         return scatter(x, monomer_labels_i, dim=0, reduce="sum")
 
 
