@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
 
-def distribution(property, path):
+def distribution_amp(property, path, bins):
     # 0 : aa average concentration
     # 1: Length             # 2: Charge              # 3: Amphiphilicity           
     # 4: Hydropathy         # 5: Secondary Structure # 6: FAI
@@ -24,8 +24,8 @@ def distribution(property, path):
         # Leyendo el archivo Excel
         df_new = pd.read_excel(path).copy()
         
-    condition_filter_amp = ((df_new['Activity'] == 1) )
-    condition_filter_nonamp = ((df_new['Activity'] == 0) )
+    condition_filter_amp = ((df_new['Label'] == 1) )
+    condition_filter_nonamp = ((df_new['Label'] == 0) )
 
     df_new_amp = df_new[condition_filter_amp].copy()
     df_new_nonamp = df_new[condition_filter_nonamp].copy()
@@ -266,9 +266,9 @@ def distribution(property, path):
         if property == 'Secondary Structure':
             plt.figure(figsize=(10, 6), dpi=260)
 
-            plt.hist(df_new_amp['sheet'], bins=10, color="yellowgreen", alpha=0.2, label="Sheet") 
-            plt.hist(df_new_amp['turn'], bins=10, color="slateblue", alpha=0.5, label="Turn") 
-            plt.hist(df_new_amp['helix'], bins=10, color="teal", alpha=0.9, label="Helix") 
+            plt.hist(df_new_amp['sheet'], bins=bins, color="yellowgreen", alpha=0.2, label="Sheet") 
+            plt.hist(df_new_amp['turn'], bins=bins, color="slateblue", alpha=0.5, label="Turn") 
+            plt.hist(df_new_amp['helix'], bins=bins, color="teal", alpha=0.9, label="Helix") 
 
             plt.xlabel('Secondary Structure Fraction ',size= 17)
             plt.ylabel('Frequency',size= 15)
@@ -292,9 +292,9 @@ def distribution(property, path):
             
             plt.figure(figsize=(10, 6))
 
-            plt.hist(df_new_nonamp['sheet'], bins=10, color="yellowgreen", alpha=0.2, label="Sheet") 
-            plt.hist(df_new_nonamp['turn'], bins=10, color="slateblue", alpha=0.5, label="Turn") 
-            plt.hist(df_new_nonamp['helix'], bins=10, color="teal", alpha=0.9, label="Helix") 
+            plt.hist(df_new_nonamp['sheet'], bins=bins, color="yellowgreen", alpha=0.2, label="Sheet") 
+            plt.hist(df_new_nonamp['turn'], bins=bins, color="slateblue", alpha=0.5, label="Turn") 
+            plt.hist(df_new_nonamp['helix'], bins=bins, color="teal", alpha=0.9, label="Helix") 
 
 
             plt.xlabel('Secondary Structure Fraction ',size= 17)
@@ -311,48 +311,262 @@ def distribution(property, path):
             plt.axvline(helix_mean_nonamp, color='yellowgreen', linestyle='dashed', linewidth=2)
             plt.axvline(turn_mean_nonamp, color='slateblue', linestyle='dashed', linewidth=2)
             plt.axvline(sheet_mean_nonamp, color='teal', linestyle='dashed', linewidth=2)
-            plt.xticks(fontsize=18)  # Set font size for x-axis tick labels
-            plt.yticks(fontsize=18)  # Set font size for y-axis tick labels 
+            plt.xticks(fontsize=12)  # Set font size for x-axis tick labels
+            plt.yticks(fontsize=12)  # Set font size for y-axis tick labels 
             
 
             plt.show()
             
             
         else:
-            plt.figure(figsize=(10, 6), dpi=260)
-            plt.hist(df_new_amp[property], bins=10, color='seagreen', alpha=0.9) 
-            plt.hist(df_new_nonamp[property], bins=10, color='tomato', alpha=0.3)
-            
-             
-            
+            # Crear la figura y los histogramas
+            plt.figure(figsize=(9, 7), dpi=260)
+            plt.hist(df_new_amp[property], bins=100, color='seagreen', alpha=0.9, log=True) 
+            plt.hist(df_new_nonamp[property], bins=100, color='tomato', alpha=0.3, log=True)
 
-            plt.xlabel(property, size= 17)
-            plt.ylabel('Frequency',size= 17)
-            plt.xticks(fontsize=18)  # Set font size for x-axis tick labels
-            plt.yticks(fontsize=18)  # Set font size for y-axis tick labels 
-            plt.title(f"Distribution of {property}",size= 20)
+            # Etiquetas de los ejes y título
+            plt.xlabel(property, size=27)
+            plt.ylabel('log(Frequency)', size=27)
+            plt.xticks(fontsize=21)  # Set font size for x-axis tick labels
+            plt.yticks(fontsize=21)  # Set font size for y-axis tick labels 
+            plt.title(f"Distribution of {property}", size=20)
 
-            #Añadir texto con medias y desviaciones estándar
-            #plt.text(0.95, 0.85, f"Mean AMP={mean_amp:.2f}\nMean nonAMP={mean_nonamp:.2f}", 
-            #        transform=plt.gca().transAxes, ha='right', color='black',
-            #        bbox=dict(facecolor='white', edgecolor='grey', boxstyle='round,pad=0.5'), size= 18)
-            
+            # Definir las leyendas y medias en una sola
             legend_handles = [
-                mpatches.Patch(color='green', alpha=0.5, label='AMP'),
-                mpatches.Patch(color='red', alpha=0.5, label='nonAMP')
+                mpatches.Patch(color='seagreen', alpha=0.5, label=f'AMP\nμ={mean_amp:.3f}±{std_amp:.3f}'),
+                mpatches.Patch(color='tomato', alpha=0.5, label=f'nonAMP\nμ={mean_nonamp:.3f}±{std_nonamp:.3f}')
             ]
-            plt.legend(handles=legend_handles, loc='upper left', fontsize=17)
+            plt.legend(handles=legend_handles, loc='upper right', fontsize=21, frameon=True)
+
             # Agregar la media al gráfico
-            plt.axvline(mean_amp, color='seagreen', linestyle='dashed', linewidth=1, label='Mean RT-AMP')
-            plt.axvline(mean_nonamp, color='tomato', linestyle='dashed', linewidth=1, label='Mean RT-nonAMP')
-            
+            plt.axvline(mean_amp, color='seagreen', linestyle='dashed', linewidth=1)
+            plt.axvline(mean_nonamp, color='tomato', linestyle='dashed', linewidth=1)
+
+            # Mostrar el gráfico
             plt.show()
+
+            # Imprimir medias y desviaciones estándar
             print(f"AMP={mean_amp:.3f}±{std_amp:.3f}")
             print(f"nonAMP={mean_nonamp:.3f}±{std_nonamp:.3f}")
-            
 
 
 
-
-
+                        
+#////////////////////////////////////////////////////////////////////////
 # %%
+from rdkit import Chem
+from rdkit.Chem import rdMolDescriptors
+from Bio.SeqUtils.ProtParam import ProteinAnalysis
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+import numpy as np
+
+def distribution(property, path, bins):
+    # 0 : aa average concentration
+    # 1: Length             # 2: Charge              # 3: Amphiphilicity           
+    # 4: Hydropathy         # 5: Secondary Structure # 6: FAI
+    # 7: Molecular Weight   # 8: Hydrophobicity      # 9: Aromaticity
+    # 10: Isoelectric Point # 11: Instability Index  
+    
+    # Filtrando el resultado Excel dependiendo de la condición
+    if path.endswith('.csv'):
+        # Leyendo el archivo CSV
+        df_new = pd.read_csv(path).copy()
+    else:
+        # Leyendo el archivo Excel
+        df_new = pd.read_excel(path).copy()
+    
+    if property == 0:
+        aminoacidos = ['A', 'R', 'N', 'D', 'C', 'Q', 'E', 'G', 'H', 'I', 'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V']
+        for aa in aminoacidos:
+            df_new[aa] = df_new[:, 0].apply(lambda x: x.count(aa) / len(x))
+        
+        avg_concentrations = df_new[aminoacidos].mean().sort_values(ascending=False)
+        
+        avg_df = pd.DataFrame({'Amino Acid': avg_concentrations.index,
+                               'Average Concentration': avg_concentrations.round(4)})
+        
+        avg_df.to_csv('average_concentrations.csv', index=False)
+    
+    elif property == 1:
+        property = 'Length'
+        df_new[property] = df_new['sequence'].apply(len)
+        # Calculate mean and standard deviation
+        mean = df_new[property].mean()
+        std = df_new[property].std()
+    
+    elif property == 2:
+        property = 'Charge'
+        df_new[property] = df_new['sequence'].apply(lambda x: ProteinAnalysis(x).charge_at_pH(7))
+        # Calculate mean and standard deviation
+        mean = df_new[property].mean()
+        std = df_new[property].std()
+    
+    elif property == 3:
+        property = 'Amphiphilicity'
+        df_valores = pd.read_csv('index.csv')  # Reemplaza con la ruta correcta
+        
+        def calcular_suma(secuencia):
+            return sum(df_valores.loc[df_valores['Letter'].isin(list(secuencia)), 'Amphiphilicity'])
+        
+        df_new[property] = df_new['sequence'].apply(calcular_suma)
+        mean = df_new[property].mean()
+        std = df_new[property].std()
+    
+    elif property == 4:
+        property = 'Hydropathy'
+        df_valores = pd.read_csv('index.csv')  
+        
+        def calcular_suma(secuencia):
+            return sum(df_valores.loc[df_valores['Letter'].isin(list(secuencia)), 'Hydropathy'])
+    
+        df_new[property] = df_new[:, 0].apply(calcular_suma)
+        mean = df_new[property].mean()
+        std = df_new[property].std()
+    
+    elif property == 5:
+        property = 'Secondary Structure'
+        
+        def predict_secondary_structure(peptide_sequence):
+            protein_analysis = ProteinAnalysis(peptide_sequence)
+            sheet, turn, helix = protein_analysis.secondary_structure_fraction()
+            return sheet, turn, helix
+        
+        df_new['helix'] = df_new['sequence'].apply(lambda x: predict_secondary_structure(x)[2])
+        df_new['turn'] = df_new['sequence'].apply(lambda x: predict_secondary_structure(x)[1])
+        df_new['sheet'] = df_new['sequence'].apply(lambda x: predict_secondary_structure(x)[0])
+        
+        helix_mean = df_new['helix'].mean()
+        helix_std = df_new['helix'].std()
+        turn_mean = df_new['turn'].mean()
+        turn_std = df_new['turn'].std()
+        sheet_mean = df_new['sheet'].mean()
+        sheet_std = df_new['sheet'].std()
+    
+    elif property == 6:
+        property = 'FAI'
+        def fai(sequence):
+            helm = peptide_to_helm(sequence)
+            mol = Chem.MolFromHELM(helm)
+            num_anillos = rdMolDescriptors.CalcNumRings(mol)
+            
+            charged_amino_acids = {'R': 2, 'H': 1, 'K': 2}
+            cationic_charges = sum(sequence.count(aa) * charge for aa, charge in charged_amino_acids.items())
+
+            if num_anillos == 0:
+                return 0
+
+            return (cationic_charges / num_anillos)
+
+        def peptide_to_helm(sequence):
+            polymer_id = 1
+            sequence_helm = "".join(sequence)
+            sequence_helm = ''.join([c + '.' if c.isupper() else c for i, c in enumerate(sequence_helm)])
+            sequence_helm = sequence_helm.rstrip('.')
+            sequence_helm = f"PEPTIDE{polymer_id}{{{sequence_helm}}}$$$$"
+            return sequence_helm
+        
+        df_new[property] = df_new['sequence'].apply(lambda x: fai(x))
+        mean = df_new[property].mean()
+        std = df_new[property].std()
+    
+    elif property == 7:
+        property = 'Molecular Weight'
+        
+        def mw_peptide(peptide_sequence):
+            peptide_analysis = ProteinAnalysis(peptide_sequence)
+            mw_peptide = peptide_analysis.molecular_weight()
+            return mw_peptide
+        
+        df_new[property] = df_new['sequence'].apply(lambda x: mw_peptide(x))
+        mean = df_new[property].mean()
+        std = df_new[property].std()
+    
+    elif property == 8:
+        property = 'Hydrophobicity'
+        
+        def hidrophobicity(peptide_sequence):
+            peptide_analysis = ProteinAnalysis(peptide_sequence)
+            hidrophobicity = peptide_analysis.gravy()
+            return hidrophobicity
+        
+        df_new[property] = df_new['sequence'].apply(lambda x: hidrophobicity(x))
+        mean = df_new[property].mean()
+        std = df_new[property].std()
+    
+    elif property == 9:
+        property = 'Aromaticity'
+        def aromaticity(peptide_sequence):
+            peptide_analysis = ProteinAnalysis(peptide_sequence)
+            aromaticity = peptide_analysis.aromaticity()
+            return aromaticity
+        
+        df_new[property] = df_new['sequence'].apply(lambda x: aromaticity(x))
+        mean = df_new[property].mean()
+        std = df_new[property].std()
+    
+    elif property == 10:
+        property = 'Isoelectric Point'
+        def isoelectric_point(peptide_sequence):
+            peptide_analysis = ProteinAnalysis(peptide_sequence)
+            isoelectric_point = peptide_analysis.isoelectric_point()
+            return isoelectric_point
+        
+        df_new[property] = df_new['sequence'].apply(lambda x: isoelectric_point(x))
+        mean = df_new[property].mean()
+        std = df_new[property].std()
+    
+    elif property == 11:
+        property = 'Instability Index'
+        def instability_index(peptide_sequence):
+            peptide_analysis = ProteinAnalysis(peptide_sequence)
+            instability_index = peptide_analysis.instability_index()
+            return instability_index
+        
+        df_new[property] = df_new[:, 0].apply(lambda x: instability_index(x))
+        mean = df_new[property].mean()
+        std = df_new[property].std()
+
+    # Plottig
+    if property != 0:
+        if property == 'Secondary Structure':
+            plt.figure(figsize=(10, 6), dpi=260)
+
+            plt.hist(df_new['sheet'], bins=bins, color="yellowgreen", alpha=0.2, label="Sheet") 
+            plt.hist(df_new['turn'], bins=bins, color="slateblue", alpha=0.5, label="Turn") 
+            plt.hist(df_new['helix'], bins=bins, color="teal", alpha=0.9, label="Helix") 
+
+            plt.xlabel('Secondary Structure Fraction ', size=17)
+            plt.ylabel('Frequency', size=15)
+            plt.title(f"Distribution of {property}", size=17)
+
+            plt.legend(fontsize='20')
+
+            plt.text(0.95, 0.055, f"Helix Mean={helix_mean:.2f}±{helix_std:.2f}\nTurn Mean={turn_mean:.4f}±{turn_std:.4f}\nSheet Mean={sheet_mean:.2f}±{sheet_std:.2f}", 
+                     transform=plt.gca().transAxes, ha='right', color='black',
+                     bbox=dict(facecolor='white', edgecolor='grey', boxstyle='round,pad=0.5'), size=16)
+            plt.axvline(helix_mean, color='yellowgreen', linestyle='dashed', linewidth=2)
+            plt.axvline(turn_mean, color='slateblue', linestyle='dashed', linewidth=2)
+            plt.axvline(sheet_mean, color='teal', linestyle='dashed', linewidth=2)
+            plt.xticks(fontsize=12)
+            plt.yticks(fontsize=12)
+            plt.show()
+        
+        else:
+            plt.figure(figsize=(5, 5), dpi=260)
+
+            plt.hist(df_new[property], bins=bins, color="lightblue", alpha=0.75, log=True)
+            plt.xlabel(f'{property}', size=17)
+            plt.ylabel('log(Frequency)', size=15)
+            plt.title(f"Distribution of {property} misc", size=17)
+
+            plt.axvline(mean, color='k', linestyle='dashed', linewidth=1)
+            plt.text(0.94, 0.94, f'μ={mean:.4f}±{std:.4f}', 
+                transform=plt.gca().transAxes, ha='right', va='top',
+                bbox=dict(facecolor='white', edgecolor='grey', boxstyle='round,pad=0.5'), fontsize=10)
+
+            plt.xticks(fontsize=12)
+            plt.yticks(fontsize=12)
+
+            plt.show()

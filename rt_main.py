@@ -31,14 +31,16 @@ start_time = time.time()
 #7) 'xbridge_amide'
 #8) 'misc_dia'
 
-datasets = ['hela_mod',
+datasets = [
+            'hela_mod',
             'yeast_unmod',
             'scx',
             'luna_hilic',
             'luna_silica',
             'atlantis_silica',
             'xbridge_amide',
-            'misc_dia']
+            'misc_dia'
+            ]
 
 
 for name_dataset in datasets:

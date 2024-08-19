@@ -40,7 +40,7 @@ class rt_GCN_Geo(torch.nn.Module):
         self.readout_atom = AttentionReadoutAtom(in_dim=hidden_dim_nn_3)
         
         #The 7 and 24 comes from the four amino acid features and blosum62 matrix that were concatenated,  95+24
-        self.nn_gat_1 = ARMAConv(hidden_dim_nn_3+95, hidden_dim_gat_1, num_stacks = 3, dropout=0, num_layers=7, shared_weights = False ) 
+        self.nn_gat_1 = ARMAConv(hidden_dim_nn_3+8, hidden_dim_gat_1, num_stacks = 3, dropout=0, num_layers=7, shared_weights = False ) 
         self.readout_aminoacid = AttentionReadoutAminoAcid(in_dim=hidden_dim_gat_1)
         
         #The 7 comes from the four peptides features that were concatenated, +7

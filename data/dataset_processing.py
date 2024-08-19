@@ -462,4 +462,52 @@ df['nueva_columna'] = 0
 df.to_csv('d8_options_p_2_5_6_7.csv', index=False)
 
 print("Nuevas secuencias añadidas al archivo sequences.csv")
+# %% Remover el 20% de un fasta file de manera aleatoria
+import pandas as pd
+import random
+import os
+
+# Leer el archivo FASTA y crear una lista de tuplas (header, sequence)
+def read_fasta(file_path):
+    with open(file_path, 'r') as file:
+        fasta_data = file.read().strip().split('>')
+        fasta_data = [(f.split('\n', 1)[0], f.split('\n', 1)[1].replace('\n', '')) for f in fasta_data if f]
+    return fasta_data
+
+# Guardar las secuencias en un nuevo archivo FASTA
+def write_fasta(fasta_data, output_path):
+    with open(output_path, 'w') as file:
+        for header, sequence in fasta_data:
+            file.write(f'>{header}\n{sequence}\n')
+
+# Eliminar un porcentaje aleatorio de secuencias
+def remove_random_sequences(fasta_data, percentage):
+    total_sequences = len(fasta_data)
+    num_to_remove = int(total_sequences * percentage)
+    indices_to_remove = random.sample(range(total_sequences), num_to_remove)
+    filtered_fasta = [seq for i, seq in enumerate(fasta_data) if i not in indices_to_remove]
+    return filtered_fasta
+
+# Ruta del archivo FASTA de entrada
+input_path = 'AMP/dataset Ruiz/train_nonamp_8494.fasta'
+
+# Leer las secuencias del archivo FASTA
+fasta_data = read_fasta(input_path)
+
+# Eliminar el 20% de las secuencias de forma aleatoria
+filtered_fasta = remove_random_sequences(fasta_data, 0.20)
+
+# Obtener el nombre del archivo de entrada sin la extensión
+base_name = os.path.splitext(input_path)[0]
+
+# Obtener el número de secuencias restantes
+num_sequences = len(filtered_fasta)
+
+# Crear el nombre del archivo de salida con el sufijo "_80%" y el número de secuencias
+output_path = f'{base_name}_80%_{num_sequences}.fasta'
+
+# Guardar las secuencias restantes en un nuevo archivo FASTA
+write_fasta(filtered_fasta, output_path)
+
+
 # %%

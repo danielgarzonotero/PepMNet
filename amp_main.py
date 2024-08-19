@@ -80,7 +80,7 @@ ruiz_testing_datataset = datasets['test_ruiz']
 
 #  Number of datapoints in each dataset:
 #Pretraining
-size_training_dataset = 0.8
+size_training_dataset = 0.9
 size_validation_dataset = 1-size_training_dataset
 n_training = int(len(ruiz_training_datataset ) * size_training_dataset)
 n_validation = len(ruiz_training_datataset ) - n_training
@@ -94,7 +94,7 @@ finish_time_preprocessing = time.time()
 time_preprocessing = (finish_time_preprocessing - start_time) / 60 
 
 # Define dataloaders para conjuntos de entrenamiento, validación y prueba:
-batch_size = 3000  #TODO
+batch_size = 4000  #TODO
 train_dataloader = DataLoader(training_datataset, batch_size, shuffle=True)
 val_dataloader = DataLoader(validation_datataset , batch_size, shuffle=True)
 test_dataloader = DataLoader(testing_datataset, batch_size, shuffle=True)
@@ -122,7 +122,7 @@ hidden_dim_gat_0 = 10
 hidden_dim_fcn_1 = 100
 hidden_dim_fcn_2 = 50
 hidden_dim_fcn_3 = 10
-dropout = 0
+dropout = 0.2
 
 
 model = amp_GCN_Geo(
@@ -143,8 +143,8 @@ model = amp_GCN_Geo(
 
 #/////////////////// Training /////////////////////////////
 # Set up optimizer:
-learning_rate = 5E-4 #TODO 
-weight_decay = 1E-5 
+learning_rate = 1E-3 #TODO 
+weight_decay = 1E-4 
 optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
 # Definir el scheduler ReduceLROnPlateau
 #scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, threshold= 0.1, verbose= True, mode='max', patience=100, factor=0.1)
@@ -165,7 +165,7 @@ for epoch in range(1, number_of_epochs+1):
                         optimizer,
                         epoch,
                         type_dataset='training')
-    
+
     train_losses.append(train_loss)
 
     val_loss = amp_validation(  model,
@@ -177,10 +177,10 @@ for epoch in range(1, number_of_epochs+1):
 
     # Programar el LR basado en la pérdida de validación
     #scheduler.step(val_loss)
-    
+
     if val_loss < best_val_loss:
         best_val_loss = val_loss
-        torch.save(model.state_dict(), "weights/best_model_weights.pth")
+        torch.save(model.state_dict(), "weights_AMP/best_model_weights.pth")
 
 finish_time_training = time.time()
 time_training = (finish_time_training - start_time_training) / 60
@@ -214,20 +214,20 @@ threshold = 0.5
 
 
 training_input, training_target, training_pred, training_pred_csv, trainig_scores = amp_predict_test(   model,
-                                                                                                    ruiz_train_dataloader,
-                                                                                                    device,
-                                                                                                    weights_file,
-                                                                                                    threshold,
-                                                                                                    type_dataset='training')
+                                                                                                ruiz_train_dataloader,
+                                                                                                device,
+                                                                                                weights_file,
+                                                                                                threshold,
+                                                                                                type_dataset='training')
 
 #Saving a CSV file with prediction values
 prediction_train_set = {
-                        'Sequence':training_input,
-                        'Target': training_target.cpu().numpy().T.flatten().tolist(),
-                        'Scores' : trainig_scores,
-                        'Prediction':  training_pred_csv
-                        
-                        }
+                    'Sequence':training_input,
+                    'Target': training_target.cpu().numpy().T.flatten().tolist(),
+                    'Scores' : trainig_scores,
+                    'Prediction':  training_pred_csv
+                    
+                    }
 
 df = pd.DataFrame(prediction_train_set)
 df.to_excel('results/training_prediction.xlsx', index=False)
@@ -237,24 +237,24 @@ df.to_excel('results/training_prediction.xlsx', index=False)
 TP_training, TN_training, FP_training, FN_training, ACC_training, PR_training, \
 SN_training, SP_training, F1_training, mcc_training, roc_auc_training = \
 amp_evaluate_model( prediction=training_pred,
-                target=training_target,
-                dataset_type='Training',
-                threshold=threshold,
-                device=device)
+            target=training_target,
+            dataset_type='Training',
+            threshold=threshold,
+            device=device)
 
 
 #-------------------------------------------- ////////// Validation Set //////////-------------------------------------------------
 validation_input, validation_target, validation_pred, validation_pred_csv, validation_scores = amp_predict_test(model,
-                                                                                                            ruiz_val_dataloader,
-                                                                                                            device, weights_file, threshold, type_dataset='validation')
+                                                                                                        ruiz_val_dataloader,
+                                                                                                        device, weights_file, threshold, type_dataset='validation')
 
 #Saving a CSV file with prediction values
 prediction_validation_set = {
-                            'Sequence':validation_input,
-                            'Target': validation_target.cpu().numpy().T.flatten().tolist(),
-                            'Scores' : validation_scores,
-                            'Prediction':  validation_pred_csv
-                            }
+                        'Sequence':validation_input,
+                        'Target': validation_target.cpu().numpy().T.flatten().tolist(),
+                        'Scores' : validation_scores,
+                        'Prediction':  validation_pred_csv
+                        }
 
 df = pd.DataFrame(prediction_validation_set)
 df.to_excel('results/validation_prediction.xlsx', index=False)
@@ -265,10 +265,10 @@ df.to_excel('results/validation_prediction.xlsx', index=False)
 TP_validation, TN_validation, FP_validation, FN_validation, ACC_validation, PR_validation, \
 SN_validation, SP_validation, F1_validation, mcc_validation, roc_auc_validation = \
 amp_evaluate_model( prediction = validation_pred,
-                target = validation_target,
-                dataset_type = 'Validation',
-                threshold = threshold,
-                device = device)
+            target = validation_target,
+            dataset_type = 'Validation',
+            threshold = threshold,
+            device = device)
 
 # --------------------------------------------////////// Test Set //////////---------------------------------------------------
 start_time_testing = time.time()
@@ -280,11 +280,11 @@ time_prediction = (finish_time_testing- start_time_testing) / 60
 
 #Saving a CSV file with prediction values
 prediction_test_set = {
-                        'Sequence':test_input,
-                        'Target': test_target.cpu().numpy().T.flatten().tolist(),
-                        'Scores' : testing_scores,
-                        'Prediction': test_pred_csv
-                        }
+                    'Sequence':test_input,
+                    'Target': test_target.cpu().numpy().T.flatten().tolist(),
+                    'Scores' : testing_scores,
+                    'Prediction': test_pred_csv
+                    }
 
 df = pd.DataFrame(prediction_test_set)
 df.to_excel('results/testing_prediction.xlsx', index=False)
@@ -294,10 +294,10 @@ df.to_excel('results/testing_prediction.xlsx', index=False)
 TP_test, TN_test, FP_test, FN_test, ACC_test, PR_test, \
 SN_test, SP_test, F1_test, mcc_test, roc_auc_test = \
 amp_evaluate_model( prediction=test_pred,
-                target = test_target,
-                dataset_type = 'Testing',
-                threshold = threshold,
-                device = device)
+            target = test_target,
+            dataset_type = 'Testing',
+            threshold = threshold,
+            device = device)
 
 
 finish_time = time.time()
@@ -305,115 +305,115 @@ total_time = (finish_time - start_time) / 60
 
 #--------------------------------///////////Result DataFrame////////////---------------------------------------
 data = {
-    "Metric": [
-    "node_features",
-    "edge_features",
-    "initial_dim_gcn",
-    "edge_dim_feature",
-    "hidden_dim_nn_1",
-    "hidden_dim_nn_2",
-    "hidden_dim_gat_0",
-    "hidden_dim_fcn_1",
-    "hidden_dim_fcn_2",
-    "hidden_dim_fcn_3",
-    "batch_size",
-    "learning_rate",
-    "weight_decay",
-    "number_of_epochs",
-    "threshold",
-    "TP_training",
-    "TN_training",
-    "FP_training",
-    "FN_training",
-    "ACC_training",
-    "PR_training",
-    "SN_training",
-    "SP_training",
-    "F1_training",
-    "mcc_training",
-    "roc_auc_training",
-    "TP_validation",
-    "TN_validation",
-    "FP_validation",
-    "FN_validation",
-    "ACC_validation",
-    "PR_validation",
-    "SN_validation",
-    "SP_validation",
-    "F1_validation",
-    "mcc_validation",
-    "roc_auc_validation",
-    "TP_test",
-    "TN_test",
-    "FP_test",
-    "FN_test",
-    "ACC_test",
-    "PR_test",
-    "SN_test",
-    "SP_test",
-    "F1_test",
-    "mcc_test",
-    "roc_auc_test",
-    "time_preprocessing",
-    "time_training",
-    "time_prediction",
-    "total_time"
-    ],
-    "Value": [
-        training_datataset.num_features,
-        training_datataset.num_edge_features,
-        initial_dim_gcn,
-        edge_dim_feature ,
-        hidden_dim_nn_1 ,
-        hidden_dim_nn_2 ,
-        hidden_dim_gat_0,
-        hidden_dim_fcn_1 ,
-        hidden_dim_fcn_2 ,
-        hidden_dim_fcn_3 ,
-        batch_size,
-        learning_rate,
-        weight_decay,
-        number_of_epochs,
-        threshold,
-        TP_training,
-        TN_training,
-        FP_training,
-        FN_training,
-        ACC_training, 
-        PR_training, 
-        SN_training, 
-        SP_training,
-        F1_training,
-        mcc_training,
-        roc_auc_training,
-        TP_validation,
-        TN_validation,
-        FP_validation,
-        FN_validation,
-        ACC_validation, 
-        PR_validation, 
-        SN_validation, 
-        SP_validation,
-        F1_validation,
-        mcc_validation,
-        roc_auc_validation,
-        TP_test,
-        TN_test,
-        FP_test,
-        FN_test,
-        ACC_test, 
-        PR_test, 
-        SN_test, 
-        SP_test,
-        F1_test,
-        mcc_test,
-        roc_auc_test,
-        time_preprocessing, 
-        time_training,
-        time_prediction,
-        total_time
-    ],
-    
+"Metric": [
+"node_features",
+"edge_features",
+"initial_dim_gcn",
+"edge_dim_feature",
+"hidden_dim_nn_1",
+"hidden_dim_nn_2",
+"hidden_dim_gat_0",
+"hidden_dim_fcn_1",
+"hidden_dim_fcn_2",
+"hidden_dim_fcn_3",
+"batch_size",
+"learning_rate",
+"weight_decay",
+"number_of_epochs",
+"threshold",
+"TP_training",
+"TN_training",
+"FP_training",
+"FN_training",
+"ACC_training",
+"PR_training",
+"SN_training",
+"SP_training",
+"F1_training",
+"mcc_training",
+"roc_auc_training",
+"TP_validation",
+"TN_validation",
+"FP_validation",
+"FN_validation",
+"ACC_validation",
+"PR_validation",
+"SN_validation",
+"SP_validation",
+"F1_validation",
+"mcc_validation",
+"roc_auc_validation",
+"TP_test",
+"TN_test",
+"FP_test",
+"FN_test",
+"ACC_test",
+"PR_test",
+"SN_test",
+"SP_test",
+"F1_test",
+"mcc_test",
+"roc_auc_test",
+"time_preprocessing",
+"time_training",
+"time_prediction",
+"total_time"
+],
+"Value": [
+    training_datataset.num_features,
+    training_datataset.num_edge_features,
+    initial_dim_gcn,
+    edge_dim_feature ,
+    hidden_dim_nn_1 ,
+    hidden_dim_nn_2 ,
+    hidden_dim_gat_0,
+    hidden_dim_fcn_1 ,
+    hidden_dim_fcn_2 ,
+    hidden_dim_fcn_3 ,
+    batch_size,
+    learning_rate,
+    weight_decay,
+    number_of_epochs,
+    threshold,
+    TP_training,
+    TN_training,
+    FP_training,
+    FN_training,
+    ACC_training, 
+    PR_training, 
+    SN_training, 
+    SP_training,
+    F1_training,
+    mcc_training,
+    roc_auc_training,
+    TP_validation,
+    TN_validation,
+    FP_validation,
+    FN_validation,
+    ACC_validation, 
+    PR_validation, 
+    SN_validation, 
+    SP_validation,
+    F1_validation,
+    mcc_validation,
+    roc_auc_validation,
+    TP_test,
+    TN_test,
+    FP_test,
+    FN_test,
+    ACC_test, 
+    PR_test, 
+    SN_test, 
+    SP_test,
+    F1_test,
+    mcc_test,
+    roc_auc_test,
+    time_preprocessing, 
+    time_training,
+    time_prediction,
+    total_time
+],
+
 }
 
 
