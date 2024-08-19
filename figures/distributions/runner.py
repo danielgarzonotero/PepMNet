@@ -110,3 +110,5 @@ for name_dataset, property_to_plot, color, y_label in plot_configs:
     df = next(df for df in dataframes if df['dataset'].iloc[0] == name_dataset)
     scatter_plot_with_r2(df, property_to_plot, color, y_label, f'Scatter Plot RT vs {property_to_plot.capitalize()} \n{name_dataset.capitalize()} Dataset')
 
+
+# %%
