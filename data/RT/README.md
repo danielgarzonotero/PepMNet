@@ -1,20 +1,14 @@
-# Dataset:	file name -	reference
+| Dataset            | File Name            | HPLC Type | Reference            |
+|--------------------|----------------------|-----------|----------------------|
+| **HeLa**           | hela_mod.csv          | RPLC      | Sharma et al.        |
+| **Yeast**          | yeast_unmod.csv       | RPLC      | Nagaraj et al.       |
+| **Misc**           | misc_dia.csv          | RPLC      | Rosenberger et al.   |
+| **SCX**            | SCX.csv               | SCX       | Gussakovsky et al.   |
+| **Luna HILIC**     | Luna_hilic.csv        | HILIC     | Spicer et al.        |
+| **Xbridge Amide**  | xbridge_amide.csv     | HILIC     | Spicer et al.        |
+| **Atlantis Silica**| atlantis_silica.csv   | HILIC     | Spicer et al.        |
+| **Luna Silica**    | luna_silica.csv       | HILIC     | Spicer et al.        |
 
-HeLa:	hela_mod.csv	- Sharma et al.
-
-Yeast:	yeast_unmod.csv	- Nagaraj et al.
-
-Misc:	misc_dia.csv -	Rosenberger et al.
-
-SCX:	SCX.csv	- Gussakovsky et al.
-
-Luna HILIC:	Luna_hilic.csv - Spicer et al.
-
-Xbridge Amide:	xbridge_amide.csv	- Spicer et al.
-
-Atlantis Silica: atlantis_silica.csv - Spicer et al.
-
-Luna Silica:	luna_silica.csv	- Spicer et al.
 
 # Copyright
 

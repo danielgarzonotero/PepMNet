@@ -1,1 +1,1 @@
-# Hierarchical-Graph-NN
+# PepMNet
