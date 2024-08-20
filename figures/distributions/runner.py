@@ -16,7 +16,7 @@ print(distribution_amp(
     )
 
 print(distribution_amp(
-                    property=2,
+                    property=8,
                     path='/home/vvd9fd/Documents/Bilodeau Group/Codes/0.Research/Hierarchical-Graph-Neural-Network/data/AMP/dataset Ruiz/Train_clean.csv',
                     bins=10
                     )
