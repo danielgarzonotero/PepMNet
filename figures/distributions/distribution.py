@@ -321,8 +321,8 @@ def distribution_amp(property, path, bins):
         else:
             # Crear la figura y los histogramas
             plt.figure(figsize=(9, 7), dpi=260)
-            plt.hist(df_new_amp[property], bins=300, color='seagreen', alpha=0.9, log=True) 
-            plt.hist(df_new_nonamp[property], bins=300, color='tomato', alpha=0.3, log=True)
+            plt.hist(df_new_amp[property], bins=bins, color='seagreen', alpha=0.9, log=True) 
+            plt.hist(df_new_nonamp[property], bins=bins, color='tomato', alpha=0.3, log=True)
 
             # Etiquetas de los ejes y título
             plt.xlabel(property, size=27)
@@ -336,7 +336,7 @@ def distribution_amp(property, path, bins):
                 mpatches.Patch(color='seagreen', alpha=0.5, label=f'AMP\nμ={mean_amp:.3f}±{std_amp:.3f}'),
                 mpatches.Patch(color='tomato', alpha=0.5, label=f'nonAMP\nμ={mean_nonamp:.3f}±{std_nonamp:.3f}')
             ]
-            plt.legend(handles=legend_handles, loc='upper right', fontsize=24, frameon=True)
+            plt.legend(handles=legend_handles, loc='upper left', fontsize=24, frameon=True)
 
             # Agregar la media al gráfico
             plt.axvline(mean_amp, color='seagreen', linestyle='dashed', linewidth=1)

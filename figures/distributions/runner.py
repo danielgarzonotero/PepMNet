@@ -4,21 +4,21 @@ from distribution import distribution_amp, distribution
 print(distribution_amp(
                     property=1,
                     path='/home/vvd9fd/Documents/Bilodeau Group/Codes/0.Research/Hierarchical-Graph-Neural-Network/data/AMP/dataset Ruiz/Train_clean.csv',
-                    bins=10
+                    bins=25
                     )
     )
 
 print(distribution_amp(
                     property=2,
                     path='/home/vvd9fd/Documents/Bilodeau Group/Codes/0.Research/Hierarchical-Graph-Neural-Network/data/AMP/dataset Ruiz/Train_clean.csv',
-                    bins=10
+                    bins=25
                     )
     )
 
 print(distribution_amp(
                     property=8,
                     path='/home/vvd9fd/Documents/Bilodeau Group/Codes/0.Research/Hierarchical-Graph-Neural-Network/data/AMP/dataset Ruiz/Train_clean.csv',
-                    bins=10
+                    bins=25
                     )
     )
 

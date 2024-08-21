@@ -16,7 +16,7 @@ threshold = 0.5
 
 # Cargar los datos de prueba
 indep_testing_dataset = GeoDataset_2(root='',
-                                    raw_name='data/TEST.csv',
+                                    raw_name='data/test.csv',
                                     index_x=0
                                     )
 finish_time = time.time()
@@ -60,7 +60,7 @@ model = rt_GCN_Geo(
                 dropout
             ).to(device)
 
-weights_file="weights/yeast_unmod_best_model_weights.pth"
+weights_file="weights_RT/yeast_unmod_best_model_weights.pth"
 
 input_all_inde, pred_prob_all_inde = rt_tester(model, indep_testing_dataloader, device, weights_file)
 
@@ -73,6 +73,6 @@ prediction_independent_set =   {
 df = pd.DataFrame(prediction_independent_set)
 df.to_excel('results/prediction_independet_set.xlsx', index=False)
 
-
+#TODO ANADIR LAS GRAFICAS ACA, ESTA FUNCIONANDO HASTA EL MOMENTO
 
 # %%
