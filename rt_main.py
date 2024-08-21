@@ -10,7 +10,7 @@ from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 from scipy.stats import pearsonr
 from math import sqrt
 from src.rt_process import rt_train, rt_validation, rt_predict_test
-from src.rt_model import rt_GCN_Geo 
+from src.rt_model import rt_pepmnet 
 from src.device import device_info
 from src.data import   GeoDataset_1
 import os
@@ -98,7 +98,7 @@ for name_dataset in datasets:
     
     dropout = 0
     
-    model = rt_GCN_Geo(
+    model = rt_pepmnet(
                         initial_dim_gcn,
                         edge_dim_feature,
                         hidden_dim_nn_1,

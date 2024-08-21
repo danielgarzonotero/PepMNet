@@ -4,7 +4,7 @@ import pandas as pd
 from torch_geometric.loader import DataLoader
 from src.data import GeoDataset_2
 from src.amp_process import indep_test
-from src.amp_model import amp_GCN_Geo
+from src.amp_model import amp_pepmnet
 from src.device import device_info
 from src.amp_evaluation_metrics import amp_evaluate_model
 
@@ -31,7 +31,7 @@ hidden_dim_fcn_1 = 10
 hidden_dim_fcn_2 = 5
 hidden_dim_fcn_3 = 3 
 
-model = amp_GCN_Geo(
+model = amp_pepmnet(
                 initial_dim_gcn,
                 edge_dim_feature,
                 hidden_dim_nn_1,

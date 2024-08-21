@@ -9,7 +9,7 @@ from torch_scatter import scatter
 
 
 #Hierarchical Graph Neural Network
-class amp_GCN_Geo(torch.nn.Module):
+class amp_pepmnet(torch.nn.Module):
     def __init__(self,
                 initial_dim_gcn,
                 edge_dim_feature,
@@ -22,7 +22,7 @@ class amp_GCN_Geo(torch.nn.Module):
                 hidden_dim_fcn_2,
                 hidden_dim_fcn_3,
                 dropout):
-        super(amp_GCN_Geo, self).__init__()
+        super(amp_pepmnet, self).__init__()
 
         self.nn_conv_1 = NNConv(initial_dim_gcn, hidden_dim_nn_1,
                                 nn=torch.nn.Sequential(torch.nn.Linear(edge_dim_feature, initial_dim_gcn * hidden_dim_nn_1)), 
@@ -32,13 +32,13 @@ class amp_GCN_Geo(torch.nn.Module):
                                 nn=torch.nn.Sequential(torch.nn.Linear(edge_dim_feature, hidden_dim_nn_1 * hidden_dim_nn_2)), 
                                 aggr='add')
         
-        self.readout_atom = AttentionReadoutAtom(in_dim=hidden_dim_nn_2)
+        self.readout_atom = atom_readout()
         
-        #The 7 and 24 comes from the four amino acid features and blosum62 matrix that were concatenated,  95+24
-        self.nn_gat_1 = ARMAConv(hidden_dim_nn_2+95, hidden_dim_gat_1, num_stacks = 3, dropout=0.4, num_layers=6, shared_weights = False ) 
-        self.readout_aminoacid = AttentionReadoutAminoAcid(in_dim=hidden_dim_gat_1)
+        #The 8 amino acid features that were concatenated
+        self.nn_gat_1 = ARMAConv(hidden_dim_nn_2+8, hidden_dim_gat_1, num_stacks = 3, dropout=0.3, num_layers=7, shared_weights = False ) 
+        self.readout_aminoacid = amino_acid_readout()
         
-        #The 7 comes from the four peptides features that were concatenated, +7
+        
         self.linear1 = nn.Linear(hidden_dim_gat_1, hidden_dim_fcn_1)
         self.linear2 = nn.Linear(hidden_dim_fcn_1, hidden_dim_fcn_2 )
         self.linear3 = nn.Linear(hidden_dim_fcn_2, hidden_dim_fcn_3) 
@@ -79,10 +79,10 @@ class amp_GCN_Geo(torch.nn.Module):
             # getting amino acids representation from atom features
             xi = self.readout_atom(xi, monomer_labels_i)
             xi = torch.cat((xi, aminoacids_features_i), dim=1)
-
+            
             amino_index_tupla = [tupla for tupla in amino_index if tupla[0] == cc_i]
             amino_index_i = amino_index_tupla[0][1]
-
+            
             # Graph convolution amino acid level
             xi = self.nn_gat_1(xi, amino_index_i) 
             xi = F.relu(xi)
@@ -110,27 +110,21 @@ class amp_GCN_Geo(torch.nn.Module):
         
         return p.view(-1)
 
-class AttentionReadoutAminoAcid(nn.Module):
-    def __init__(self, in_dim):
-        super(AttentionReadoutAminoAcid, self).__init__()
-        self.attention = nn.Linear(in_dim, 1)
+class amino_acid_readout(nn.Module):
+    def __init__(self):
+        super(amino_acid_readout, self).__init__()
         self.readout = aggr.SumAggregation()
-
+        
     def forward(self, x):
-        attn_weights = F.softmax(self.attention(x), dim=0)
-        weighted_x = x * attn_weights
-        return self.readout(weighted_x)
+        return self.readout(x)
     
-class AttentionReadoutAtom(nn.Module):
-    def __init__(self, in_dim):
-        super(AttentionReadoutAtom, self).__init__()
-        self.attention = nn.Linear(in_dim, 1)
+class atom_readout(nn.Module):
+    def __init__(self):
+        super(atom_readout, self).__init__()
         
     def forward(self, x, monomer_labels_i):
-        attn_weights = F.softmax(self.attention(x), dim=0)
-        weighted_x = x * attn_weights
         
-        return scatter(weighted_x, monomer_labels_i, dim=0, reduce="sum")
+        return scatter(x, monomer_labels_i, dim=0, reduce="sum")
 
 # %%
 

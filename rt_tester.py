@@ -6,7 +6,7 @@ import pandas as pd
 from torch_geometric.loader import DataLoader
 from src.data import GeoDataset_2
 from src.rt_process import rt_tester
-from src.rt_model import rt_GCN_Geo
+from src.rt_model import rt_pepmnet
 from src.device import device_info
 
 device_information = device_info()
@@ -45,7 +45,7 @@ hidden_dim_fcn_3 = 10
 dropout = 0
 
 
-model = rt_GCN_Geo(
+model = rt_pepmnet(
                 initial_dim_gcn,
                 edge_dim_feature,
                 hidden_dim_nn_1,

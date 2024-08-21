@@ -8,7 +8,7 @@ from torch_geometric.nn import aggr
 from torch_scatter import scatter
 
 #Hierarchical Graph Neural Network
-class rt_GCN_Geo(torch.nn.Module):
+class rt_pepmnet(torch.nn.Module):
     def __init__(self,
                 initial_dim_gcn,
                 edge_dim_feature,
@@ -22,7 +22,7 @@ class rt_GCN_Geo(torch.nn.Module):
                 hidden_dim_fcn_2,
                 hidden_dim_fcn_3,
                 dropout):
-        super(rt_GCN_Geo, self).__init__()
+        super(rt_pepmnet, self).__init__()
 
         self.nn_conv_1 = NNConv(initial_dim_gcn, hidden_dim_nn_1,
                                 nn=torch.nn.Sequential(torch.nn.Linear(edge_dim_feature, initial_dim_gcn * hidden_dim_nn_1)), 
