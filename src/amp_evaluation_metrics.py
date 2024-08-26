@@ -27,7 +27,7 @@ def amp_evaluate_model(prediction, target, dataset_type, threshold, device):
             plt.text(j, i, str(confusion_matrix_np[i, j]), ha='center', va='center', color='black', fontsize=18)
     plt.xlabel('Predicted Negative         Predicted Positive')
     plt.ylabel('True Positive               True Negative')
-    plt.savefig('results/{}_bcm.png'.format(dataset_type), dpi=216)
+    plt.savefig('results/AMP/{}_bcm.png'.format(dataset_type), dpi=216)
     plt.show()
     
     
@@ -56,7 +56,7 @@ def amp_evaluate_model(prediction, target, dataset_type, threshold, device):
     plt.ylabel('True Positive Rate (TPR)',fontsize=14)
     plt.title('Receiver Operating Characteristic (ROC) Curve - {} Set'.format(dataset_type))
     plt.legend(loc='lower right', fontsize=16)
-    plt.savefig('results/{}_ROC.png'.format(dataset_type), dpi=216)
+    plt.savefig('results/AMP/{}_ROC.png'.format(dataset_type), dpi=216)
     plt.show()
     
     return  TP, TN, FP, FN, ACC, PR, SN, SP,F1, mcc, roc_auc

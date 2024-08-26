@@ -11,7 +11,7 @@ from src.utils import get_aminoacids
 import os
 import torch
 
-def get_aminoacid_features(): #TODO remplazar aca por sequence_list para tener los aminoacidos encontrados y no tenerlos manualmente
+def get_aminoacid_features(): 
     
     
     wt_amino =[]

@@ -25,15 +25,14 @@ class rt_pepmnet(torch.nn.Module):
         super(rt_pepmnet, self).__init__()
 
         self.nn_conv_1 = NNConv(initial_dim_gcn, hidden_dim_nn_1,
-                                nn=torch.nn.Sequential(torch.nn.Linear(edge_dim_feature, initial_dim_gcn * hidden_dim_nn_1)), 
-                                aggr='add' )
-        
-        self.nn_conv_2 = NNConv(hidden_dim_nn_1, hidden_dim_nn_2,
-                                nn=torch.nn.Sequential(torch.nn.Linear(edge_dim_feature, hidden_dim_nn_1 * hidden_dim_nn_2)), 
+                                nn=torch.nn.Sequential(torch.nn.Linear(edge_dim_feature, initial_dim_gcn * hidden_dim_nn_1)),
                                 aggr='add')
         
+        self.nn_conv_2 = NNConv(hidden_dim_nn_1, hidden_dim_nn_2,
+                                nn=torch.nn.Sequential(torch.nn.Linear(edge_dim_feature, hidden_dim_nn_1 * hidden_dim_nn_2)),
+                                aggr='add')
         self.nn_conv_3 = NNConv(hidden_dim_nn_2, hidden_dim_nn_3,
-                                nn=torch.nn.Sequential(torch.nn.Linear(edge_dim_feature, hidden_dim_nn_2 * hidden_dim_nn_3)), 
+                                nn=torch.nn.Sequential(torch.nn.Linear(edge_dim_feature, hidden_dim_nn_2 * hidden_dim_nn_3)),
                                 aggr='add')
         
         #self.readout = aggr.SumAggregation()

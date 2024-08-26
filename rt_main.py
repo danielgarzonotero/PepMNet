@@ -33,8 +33,14 @@ start_time = time.time()
 #8) 'misc_dia'
 
 datasets = [
+            'hela_mod',
+            'yeast_unmod',
+            'scx',
+            'luna_hilic',
+            'luna_silica',
+            'atlantis_silica',
             'xbridge_amide',
-            'misc_dia'
+            'misc_dia',
             ]
 
 for name_dataset in datasets:
@@ -77,7 +83,7 @@ for name_dataset in datasets:
     print('Number of EDGES features: ', training_validation_datataset.num_edge_features)
     
     finish_time_preprocessing = time.time()
-    time_preprocessing = (finish_time_preprocessing - start_time) / 60  # TODO
+    time_preprocessing = (finish_time_preprocessing - start_time) / 60  # TODO revisar el calculo de los tiempos
     
     torch.manual_seed(0)
     
@@ -332,6 +338,6 @@ for name_dataset in datasets:
     df = pd.DataFrame(data)
     df.to_csv('results/RT/{}_dataset_results.csv'.format(name_dataset), index=False)
 
-print('////////////// Done//////////////')
+print('////////////// Done //////////////')
 
 # %%

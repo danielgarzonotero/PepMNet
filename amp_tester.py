@@ -8,13 +8,14 @@ from src.amp_model import amp_pepmnet
 from src.device import device_info
 from src.amp_evaluation_metrics import amp_evaluate_model
 
+#TODO REVISAR SI SIRVE
 device_information = device_info()
 device = device_information.device
 batch_size = 100
 threshold = 0.5
 
 # Cargar los datos de prueba
-indep_testing_dataset = GeoDataset_2(raw_name='data/dataset/d8_options_p_2_5_6_7.csv')
+indep_testing_dataset = GeoDataset_2(raw_name='data/dataset/d8_options_p_2_5_6_7.csv') #TODO ver si se puede tener una sola clase
 indep_testing_dataloader = DataLoader(indep_testing_dataset, batch_size, shuffle=False)
 
 # Set up model:
