@@ -1,64 +1,173 @@
 #%%
 import torch
+import torch
 import pandas as pd
 from torch_geometric.loader import DataLoader
 from src.data import GeoDataset_2
-from src.amp_process import indep_test
+from src.amp_process import amp_predict_test
 from src.amp_model import amp_pepmnet
 from src.device import device_info
-from src.amp_evaluation_metrics import amp_evaluate_model
+import matplotlib.pyplot as plt
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import roc_auc_score, average_precision_score, confusion_matrix, roc_curve, auc
+from sklearn.metrics import matthews_corrcoef
+import numpy as np
 
-#TODO REVISAR SI SIRVE
+
+# Configuración del dispositivo y batch size
 device_information = device_info()
 device = device_information.device
 batch_size = 100
 threshold = 0.5
 
 # Cargar los datos de prueba
-indep_testing_dataset = GeoDataset_2(raw_name='data/dataset/d8_options_p_2_5_6_7.csv') #TODO ver si se puede tener una sola clase
+indep_testing_dataset = GeoDataset_2(
+                                    raw_name='data/AMP/dataset Ruiz/Test_clean.csv',
+                                    root='',
+                                    index_x=0
+                                    )
 indep_testing_dataloader = DataLoader(indep_testing_dataset, batch_size, shuffle=False)
 
-# Set up model:
-# Initial Inputs
+# Configuración del modelo
 initial_dim_gcn = indep_testing_dataset.num_features
 edge_dim_feature = indep_testing_dataset.num_edge_features
 
 hidden_dim_nn_1 = 20
 hidden_dim_nn_2 = 10
+hidden_dim_gat_0 = 50
+hidden_dim_fcn_1 = 200
+hidden_dim_fcn_2 = 100
+hidden_dim_fcn_3 = 10
+dropout = 0
 
-hidden_dim_gat_0 = 10
-
-hidden_dim_fcn_1 = 10
-hidden_dim_fcn_2 = 5
-hidden_dim_fcn_3 = 3 
-
+# Inicialización del modelo
 model = amp_pepmnet(
-                initial_dim_gcn,
-                edge_dim_feature,
-                hidden_dim_nn_1,
-                hidden_dim_nn_2,
-                hidden_dim_gat_0,
-                hidden_dim_fcn_1,
-                hidden_dim_fcn_2,
-                hidden_dim_fcn_3,
+                    initial_dim_gcn,
+                    edge_dim_feature,
+                    hidden_dim_nn_1,
+                    hidden_dim_nn_2,
+                    hidden_dim_gat_0,
+                    hidden_dim_fcn_1,
+                    hidden_dim_fcn_2,
+                    hidden_dim_fcn_3,
+                    dropout
                 ).to(device)
 
-weights_file="weights/best_model_weights_p_Chung_n_Chung_Xiao_epochs100_batch100.pth"
+# Listas para almacenar las secuencias, targets y las predicciones de los modelos
+sequences = []
+targets = []
+all_scores = []
 
-# Ejecutar la función de predicción en el conjunto de datos de prueba utilizando el modelo cargado
-indep_testing_input,indep_testing_pred, indep_testing_pred_csv, indep_testing_scores = indep_test(model, indep_testing_dataloader, device, weights_file, threshold, type_dataset='testing')
+# Realizar predicciones usando los cinco modelos
+folds = [1, 2, 3, 4, 5]
+for fold in folds:
+    weights_file = f"weights_AMP/d1/best_model_weights_fold_{fold}.pth"
 
-# Guardar un archivo CSV con los valores de predicción
-indep_prediction_test_set = {
-    'Sequence': indep_testing_input,
-    'Scores' : indep_testing_scores,
-    'Prediction': indep_testing_pred_csv, 
-}
+    # Realizar la predicción usando el modelo cargado
+    test_sequences, test_target, _, test_pred_csv, test_scores = amp_predict_test(
+                                                                                    model,
+                                                                                    indep_testing_dataloader,
+                                                                                    device,
+                                                                                    weights_file,
+                                                                                    threshold,
+                                                                                )
 
-df = pd.DataFrame(indep_prediction_test_set)
-df.to_excel('results/indep_testing_prediction.xlsx', index=False)
+    # Almacenar secuencias y targets (solo una vez)
+    if not sequences:
+        sequences = test_sequences
+        targets = test_target
 
-print('\n ///// Independent_set_prediction.xlsx File Created /////')
+    # Almacenar las puntuaciones del modelo
+    all_scores.append(test_scores)
+
+# Convertir las predicciones en un DataFrame
+df = pd.DataFrame({
+    'Sequence': sequences,
+    'Target': targets,
+    'Scores model 1': all_scores[0],
+    'Scores model 2': all_scores[1],
+    'Scores model 3': all_scores[2],
+    'Scores model 4': all_scores[3],
+    'Scores model 5': all_scores[4],
+})
+
+# Calcular el promedio y la desviación estándar de las predicciones
+df['Average score'] = df[['Scores model 1', 'Scores model 2', 'Scores model 3', 'Scores model 4', 'Scores model 5']].mean(axis=1)
+df['Standard deviation'] = df[['Scores model 1', 'Scores model 2', 'Scores model 3', 'Scores model 4', 'Scores model 5']].std(axis=1)
+
+# Guardar el DataFrame en un archivo CSV
+df.to_excel('results/AMP/indep_testing_predictions.xlsx', index=False)
+
+print('\n ///// File Created with Predictions, Average Score, and Standard Deviation /////')
+
+# Evaluar el rendimiento usando el promedio de los scores
+y_true = df['Target'].values
+y_scores = df['Average score'].values
+y_pred = (y_scores >= threshold).astype(int)
+
+# Calcular métricas de desempeño
+acc = accuracy_score(y_true, y_pred)
+prec = precision_score(y_true, y_pred)
+rec = recall_score(y_true, y_pred)
+f1 = f1_score(y_true, y_pred)
+auc_roc = roc_auc_score(y_true, y_scores)
+ap = average_precision_score(y_true, y_scores)
+conf_mat = confusion_matrix(y_true, y_pred)
+
+# Calcular la curva ROC
+fpr, tpr, _ = roc_curve(y_true, y_scores)
+roc_auc = auc(fpr, tpr)
+tn, fp, fn, tp = conf_mat.ravel()
+specificity = tn / (tn + fp)
+mcc = matthews_corrcoef(y_true, y_pred)
+
+# Mostrar métricas
+print(f'\n///////// Evaluation Metrics using Average Scores ////////')
+print(f"- AUC using roc_auc_score: {auc_roc:.4f}")
+print(f"- AUC using auc: {roc_auc:.4f}")
+print(f"- Accuracy: {acc:.4f}")
+print(f"- Precision: {prec:.4f}")
+print(f"- Recall: {rec:.4f}")
+print(f"- F1-score: {f1:.4f}")
+print(f"- Average Precision: {ap:.4f}")
+print(f"- Specificity: {specificity:.4f}")
+print(f"- MCC: {mcc:.4f}")
+
+# Graficar la curva ROC
+plt.figure(figsize=(7, 7))
+plt.plot(fpr, tpr, color='green', lw=2, label=f'AUC-ROC = {auc_roc:.4f}')
+plt.plot([0, 1], [0, 1], color='navy', lw=1, linestyle='--')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.grid()
+plt.xlabel('False Positive Rate', fontsize=26, labelpad=15)
+plt.ylabel('True Positive Rate', fontsize=26, labelpad=15)
+plt.title('Receiver Operating Characteristic (ROC)', fontsize=20, pad=30)
+plt.xticks(fontsize=22)
+plt.yticks(fontsize=22)
+plt.legend(loc="lower right", fontsize=20)
+plt.show()
+
+# Graficar la matriz de confusión
+cmap = plt.get_cmap('YlGn')
+plt.figure(figsize=(7, 7))
+plt.imshow(conf_mat, cmap=cmap, interpolation='nearest')
+plt.title('Confusion Matrix - Testing', fontsize=20, pad=20)
+plt.colorbar()
+plt.xticks([0, 1], ['Predicted 0', 'Predicted 1'], fontsize=16)
+plt.yticks([0, 1], ['Target 0', 'Target 1'], fontsize=16)
+
+# Añadir valores en las celdas
+for i in range(2):
+    for j in range(2):
+        plt.text(j, i, conf_mat[i, j], horizontalalignment='center', color='black', fontsize=24)
+
+plt.xlabel('Predicted', fontsize=26, labelpad=15)
+plt.ylabel('Target', fontsize=26, labelpad=15)
+plt.grid(False)
+plt.show()
+
+
 
 
 # %%

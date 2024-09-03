@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from sklearn.metrics import roc_curve, auc
+from sklearn.metrics import roc_curve, auc, average_precision_score
 from torchmetrics.classification import BinaryConfusionMatrix
 import torch 
 import numpy as np
@@ -27,7 +27,7 @@ def amp_evaluate_model(prediction, target, dataset_type, threshold, device):
             plt.text(j, i, str(confusion_matrix_np[i, j]), ha='center', va='center', color='black', fontsize=18)
     plt.xlabel('Predicted Negative         Predicted Positive')
     plt.ylabel('True Positive               True Negative')
-    plt.savefig('results/AMP/{}_bcm.png'.format(dataset_type), dpi=216)
+    plt.savefig('results/AMP/bcm_{}.png'.format(dataset_type), dpi=216)
     plt.show()
     
     
@@ -37,7 +37,8 @@ def amp_evaluate_model(prediction, target, dataset_type, threshold, device):
     SN = TP / (TP + FN)
     SP = TN / (TN + FP)
     F1 = 2 * (PR * SN) / (PR + SN)
-    
+    ap = average_precision_score(np.array(target), np.array(prediction))
+
     # Calcular Matthews Correlation Coefficient (MCC)
     mcc = (TP * TN - FP * FN) / \
                         ((TP + FP) * (TP + FN) * \
@@ -50,14 +51,14 @@ def amp_evaluate_model(prediction, target, dataset_type, threshold, device):
     roc_auc = auc(fpr, tpr)
     
     plt.figure(figsize=(8, 6))
-    plt.plot(fpr, tpr, color='mediumseagreen', lw=2, label=f'AUC = {roc_auc:.2f}')
+    plt.plot(fpr, tpr, color='mediumseagreen', lw=2, label=f'AUC = {roc_auc:.4f}')
     plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--', label='Random Guess')
     plt.xlabel('False Positive Rate (FPR)',fontsize=14)
     plt.ylabel('True Positive Rate (TPR)',fontsize=14)
     plt.title('Receiver Operating Characteristic (ROC) Curve - {} Set'.format(dataset_type))
     plt.legend(loc='lower right', fontsize=16)
-    plt.savefig('results/AMP/{}_ROC.png'.format(dataset_type), dpi=216)
+    plt.savefig('results/AMP/ROC_{}.png'.format(dataset_type), dpi=216)
     plt.show()
     
-    return  TP, TN, FP, FN, ACC, PR, SN, SP,F1, mcc, roc_auc
+    return  TP, TN, FP, FN, ACC, PR, SN, SP,F1, mcc, roc_auc,ap
 

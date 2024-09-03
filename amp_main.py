@@ -48,10 +48,8 @@ finish_time_preprocessing = time.time()
 time_preprocessing = (finish_time_preprocessing - start_time) / 60 
 
 # Train with a random seed to initialize weights:
-torch.manual_seed(24)
 
 # Set up model:
-# Initial Inputs
 initial_dim_gcn = testing_datataset.num_features
 edge_dim_feature = testing_datataset.num_edge_features
 
@@ -65,34 +63,55 @@ hidden_dim_fcn_2 = 100
 hidden_dim_fcn_3 = 10
 dropout = 0
 
+def initialize_model(initial_dim_gcn,
+                    edge_dim_feature,
+                    hidden_dim_nn_1,
+                    hidden_dim_nn_2,
+                    hidden_dim_gat_0,
+                    hidden_dim_fcn_1,
+                    hidden_dim_fcn_2,
+                    hidden_dim_fcn_3,
+                    dropout,
 
-model = amp_pepmnet(
-                initial_dim_gcn,
-                edge_dim_feature,
-                hidden_dim_nn_1,
-                hidden_dim_nn_2,
-                
-                hidden_dim_gat_0,
-                
-                hidden_dim_fcn_1,
-                hidden_dim_fcn_2,
-                hidden_dim_fcn_3,
-                dropout
-                ).to(device)
+                    learning_rate,
+                    weight_decay,
+                    seed,
+                    ):
+    
+    torch.manual_seed(seed)
+
+    model = amp_pepmnet(
+                    initial_dim_gcn,
+                    edge_dim_feature,
+                    hidden_dim_nn_1,
+                    hidden_dim_nn_2,
+                    
+                    hidden_dim_gat_0,
+                    
+                    hidden_dim_fcn_1,
+                    hidden_dim_fcn_2,
+                    hidden_dim_fcn_3,
+                    dropout
+                    ).to(device)
+    
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
+
+    return model, optimizer
+
+
 
 #/////////////////// Training /////////////////////////////
 # Set up optimizer:
 learning_rate = 1E-3 
 weight_decay = 1E-5 
 batch_size = 100
-optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
 
 ruiz_testing_datataset = datasets['test_ruiz']
-ruiz_test_dataloader = DataLoader(ruiz_testing_datataset , batch_size, shuffle=True)
+ruiz_test_dataloader = DataLoader(ruiz_testing_datataset , batch_size, shuffle=False)
 
 start_time_training = time.time()
 ruiz_training_datataset = datasets['train_ruiz']
-number_of_epochs = 300
+number_of_epochs = 500
 k_folds = 5  # Número de particiones para K-Fold Cross-Validation
 kfold = KFold(n_splits=k_folds, shuffle=True, random_state=24)
 
@@ -105,7 +124,22 @@ for fold, (train_ids, val_ids) in enumerate(kfold.split(ruiz_training_datataset)
     print(f'//////// Fold {fold+1}/{k_folds}: ///////////')
     print(f'  Train IDs: {len(train_ids)} samples')
     print(f'  Val IDs:   {len(val_ids)} samples')
-    
+
+    model, optimizer = initialize_model(initial_dim_gcn,
+                                        edge_dim_feature,
+                                        hidden_dim_nn_1,
+                                        hidden_dim_nn_2,
+                                        hidden_dim_gat_0,
+                                        hidden_dim_fcn_1,
+                                        hidden_dim_fcn_2,
+                                        hidden_dim_fcn_3,
+                                        dropout,
+                                        
+                                        learning_rate,
+                                        weight_decay,
+                                        seed = fold
+                                        )
+
     # Crear subsets y dataloaders
     train_subsampler = Subset(ruiz_training_datataset, train_ids)
     val_subsampler = Subset(ruiz_training_datataset, val_ids)
@@ -181,13 +215,14 @@ for fold, (train_ids, val_ids) in enumerate(kfold.split(ruiz_training_datataset)
     
     # Evaluar el modelo en el conjunto de entrenamiento y obtener métricas
     TP_training, TN_training, FP_training, FN_training, ACC_training, PR_training, \
-    SN_training, SP_training, F1_training, mcc_training, roc_auc_training = \
+    SN_training, SP_training, F1_training, mcc_training, roc_auc_training, ap_training = \
     amp_evaluate_model(
                         prediction=training_scores,
                         target=training_target,
-                        dataset_type='Training',
+                        dataset_type=f'Training_fold_{fold+1}',
                         threshold=threshold,
                         device=device
+                        
                         )
     
     # -------------------------------------------- ////////// Validation Set //////////-------------------------------------------------
@@ -212,15 +247,14 @@ for fold, (train_ids, val_ids) in enumerate(kfold.split(ruiz_training_datataset)
     
     # Evaluar el modelo en el conjunto de validación y obtener métricas
     TP_validation, TN_validation, FP_validation, FN_validation, ACC_validation, PR_validation, \
-    SN_validation, SP_validation, F1_validation, mcc_validation, roc_auc_validation = \
+    SN_validation, SP_validation, F1_validation, mcc_validation, roc_auc_validation, ap_validation = \
     amp_evaluate_model( 
                         prediction= validation_scores,
                         target=validation_target,
-                        dataset_type='Validation',
+                        dataset_type=f'Validation_fold_{fold+1}',
                         threshold=threshold,
                         device=device
                         )
-    
     
     print(f'///// Fold {fold+1}-Training Metrics: //////')
     print(f'  Accuracy: {ACC_training:.4f}')
@@ -228,7 +262,8 @@ for fold, (train_ids, val_ids) in enumerate(kfold.split(ruiz_training_datataset)
     print(f'  Recall: {SN_training:.4f}')
     print(f'  F1-score: {F1_training:.4f}')
     print(f'  MCC: {mcc_training:.4f}')
-    print(f'  ROC AUC: {roc_auc_training:.4f}\n')
+    print(f'  ROC AUC: {roc_auc_training:.4f}')
+    print(f'  Average Precision: {ap_training:.4f}\n')
     
     print(f'///// Fold {fold+1}-Validation Metrics: /////')
     print(f'  Accuracy: {ACC_validation:.4f}')
@@ -236,7 +271,8 @@ for fold, (train_ids, val_ids) in enumerate(kfold.split(ruiz_training_datataset)
     print(f'  Recall: {SN_validation:.4f}')
     print(f'  F1-score: {F1_validation:.4f}')
     print(f'  MCC: {mcc_validation:.4f}')
-    print(f'  ROC AUC: {roc_auc_validation:.4f}\n')
+    print(f'  ROC AUC: {roc_auc_validation:.4f}')
+    print(f'  Average Precision: {ap_validation:.4f}\n')
 
 
 finish_time_training = time.time()
@@ -253,70 +289,75 @@ std_val_loss = np.std(val_losses)
 print(f'Average validation loss across all folds: {avg_val_loss:.7f} ± {std_val_loss:.7f}')
 
 # --------------------------------------------////////// Test Set //////////---------------------------------------------------
-# Path where the models were saved
-model_paths = [f"weights_AMP/best_model_weights_fold_{fold+1}.pth" for fold in range(k_folds)]
-
-# List to store the weights of each model
-model_weights = []
-
-# Load and store the weights of each model
-for path in model_paths:
-    state_dict = torch.load(path)
-    model_weights.append(state_dict)
-
-# Average the weights of all models
-average_weights = OrderedDict()  # Initialize a dictionary that maintains insertion order
-
-# Iterate over keys of the first model's state_dict
-for key in model_weights[0].keys():
-    # Compute the mean of the tensors corresponding to the key across all models
-    average_weights[key] = torch.stack([model[key] for model in model_weights]).mean(0)
-
-# Create the model with averaged weights
-average_model = model
-average_model.load_state_dict(average_weights)
-# Save the averaged model
-torch.save(average_model.state_dict(), "weights_AMP/ensemble_model_weights.pth")
-print('\n///// Ensemble Created /////')
-path_weights_file = "weights_AMP/ensemble_model_weights.pth"
-
+print('//////// Testing ///////')
+# Realizar predicciones usando los cinco modelos
+folds = [1, 2, 3, 4, 5]
+sequences, targets = [], []
+all_scores = []
 start_time_testing = time.time()
 
-# Perform testing/prediction with the averaged model
-test_sequences, test_target, test_pred, test_pred_csv, test_scores = amp_predict_test(
+for fold in folds:
+    weights_file = f"weights_AMP/best_model_weights_fold_{fold}.pth"
+    
+    # Realizar la predicción usando el modelo cargado
+    test_sequences, test_target, _, test_pred_csv, test_scores = amp_predict_test(
                                                                                     model,
                                                                                     ruiz_test_dataloader,
                                                                                     device,
-                                                                                    path_weights_file,
+                                                                                    weights_file,
                                                                                     threshold,
-                                                                                    )
+                                                                                )
+    
+    # Almacenar secuencias y targets (solo una vez)
+    if not sequences:
+        sequences = test_sequences
+        targets = test_target
+        
+    # Almacenar las puntuaciones del modelo
+    all_scores.append(test_scores)
+
+# Convertir las predicciones en un DataFrame con scores de cada fold
+df = pd.DataFrame({
+    'Sequence': sequences,
+    'Target': targets,
+    'Scores model 1': all_scores[0],
+    'Scores model 2': all_scores[1],
+    'Scores model 3': all_scores[2],
+    'Scores model 4': all_scores[3],
+    'Scores model 5': all_scores[4],
+})
+
+# Calcular el promedio y la desviación estándar de las predicciones
+df['Average score'] = df[['Scores model 1', 'Scores model 2', 'Scores model 3', 'Scores model 4', 'Scores model 5']].mean(axis=1)
+df['Standard deviation'] = df[['Scores model 1', 'Scores model 2', 'Scores model 3', 'Scores model 4', 'Scores model 5']].std(axis=1)
+
+# Generar predicción redondeada con el threshold
+df['Prediction'] = (df['Average score'] >= threshold).astype(int)
+
+# Guardar el DataFrame en un archivo Excel
+df.to_excel('results/AMP/testing_prediction.xlsx', index=False)
 
 finish_time_testing = time.time()
 time_prediction = (finish_time_testing - start_time_testing) / 60
 
-#Saving a CSV file with prediction values
-prediction_test_set = {
-                        'Sequence':test_sequences,
-                        'Target': test_target,
-                        'Scores' : test_scores,
-                        'Prediction': test_pred_csv
-                        }
-
-df = pd.DataFrame(prediction_test_set)
-df.to_excel('results/AMP/testing_prediction.xlsx', index=False)
-
-# Evaluation metrics:
-
+# Calcular métricas de evaluación
 TP_test, TN_test, FP_test, FN_test, ACC_test, PR_test, \
-SN_test, SP_test, F1_test, mcc_test, roc_auc_test = \
-amp_evaluate_model( 
-                    prediction=test_scores,
-                    target = test_target,
-                    dataset_type = 'Testing',
-                    threshold = threshold,
-                    device = device
-                    )
+SN_test, SP_test, F1_test, mcc_test, roc_auc_test, ap_test = amp_evaluate_model(
+                                                                        prediction=df['Average score'].values,
+                                                                        target=df['Target'].values,
+                                                                        dataset_type='Testing',
+                                                                        threshold=threshold,
+                                                                        device=device
+                                                                    )
 
+print(f'///// Testing Metrics: //////')
+print(f'  Accuracy: {ACC_test:.4f}')
+print(f'  Precision: {PR_test:.4f}')
+print(f'  Recall: {SN_test:.4f}')
+print(f'  F1-score: {F1_test:.4f}')
+print(f'  MCC: {mcc_test:.4f}')
+print(f'  ROC AUC: {roc_auc_test:.4f}')
+print(f'  Average Precision: {ap_test:.4f}\n')
 
 finish_time = time.time()
 total_time = (finish_time - start_time) / 60

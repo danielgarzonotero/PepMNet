@@ -155,8 +155,8 @@ for name_dataset in datasets:
         val_losses.append(val_loss)
         
         # Save the model's weights if the current validation loss is the best so far.
-        if val_loss < best_val_loss:
-            best_val_loss = val_loss
+        if train_loss < best_val_loss:
+            best_val_loss = train_loss
             torch.save(model.state_dict(), "weights_RT/{}_best_model_weights.pth".format(name_dataset))
             
             

@@ -100,7 +100,7 @@ ax.set_xlabel('False Positive Rate', fontsize=24, labelpad=20)  # Aumentar el es
 ax.set_ylabel('True Positive Rate', fontsize=24, labelpad=20)  # Aumentar el espacio con labelpad
 #ax.set_title('ROC Curve for Antimicrobial Classification: Comparing Graph Convolution Layers at the Amino Acid Level', fontsize=20, pad=30)  # Aumentar el espacio con pad
 ax.grid()
-ax.legend(loc='lower right', fontsize=18)
+ax.legend(loc='lower right', fontsize=20) #title = 'Layer Type:', title_fontsize='18')
 
 # Crear una leyenda personalizada
 #legend_texts = [f'{label} = {np.mean(data["aucs"]):.4f} ± {np.std(data["aucs"]):.4f}' for label, data in results.items()]

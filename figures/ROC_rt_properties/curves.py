@@ -16,7 +16,7 @@ def clean_sequence(peptide_sequence):
     return sequence
 
 # Lee el archivo CSV para AMP
-file_path_amp = 'indep_testing_prediction.csv'
+file_path_amp = 'indep_testing_predictions.csv'
 df_amp = pd.read_csv(file_path_amp)
 
 # Limpia las secuencias en el DataFrame
@@ -47,11 +47,11 @@ rt_rplc = df_rplc['RT(s)']
 rt_hilic = df_hilic['RT(min)']
 
 # Extraer columnas necesarias
-scores = df_amp['Scores']
+scores = df_amp['Average score']
 charge = df_amp['charge']
 hydrophobicity_values = df_amp['hydrophobicity']
 length = df_amp['length']
-targets = df_amp['Targets']
+targets = df_amp['Target']
 
 # Calcular las curvas ROC para cada conjunto de datos
 fpr_scores, tpr_scores, _ = roc_curve(targets, scores)
@@ -82,9 +82,9 @@ plt.plot(fpr_scores, tpr_scores, color='mediumseagreen', lw=2, label=f'AMP Score
 plt.plot(fpr_scores_charge, tpr_scores_charge, color='orange', lw=2, label=f'Charge = {roc_auc_scores_charge:.3f}')
 plt.plot(fpr_scores_hydrophobicity, tpr_scores_hydrophobicity, color='tomato', lw=2, label=f'Hydrophobicity = {roc_auc_scores_hydrophobicity:.3f}')
 plt.plot(fpr_scores_length, tpr_scores_length, color='lightseagreen', lw=2, label=f'Length = {roc_auc_scores_length:.3f}')
-plt.plot(fpr_scx, tpr_scx, color='khaki', lw=2, label=f'RT SCX = {roc_auc_scx:.3f}')
-plt.plot(fpr_rplc, tpr_rplc, color='steelblue', lw=2, label=f'RT RPLC = {roc_auc_rplc:.3f}')
-plt.plot(fpr_hilic, tpr_hilic, color='lightgrey', lw=2, label=f'RT HILIC = {roc_auc_hilic:.3f}')
+plt.plot(fpr_scx, tpr_scx, color='khaki', lw=2, label=f'RT Predicted - SCX model = {roc_auc_scx:.3f}')
+plt.plot(fpr_rplc, tpr_rplc, color='steelblue', lw=2, label=f'RT Predicted - RPLC model = {roc_auc_rplc:.3f}')
+plt.plot(fpr_hilic, tpr_hilic, color='lightgrey', lw=2, label=f'RT Predicted - HILIC model = {roc_auc_hilic:.3f}')
 
 plt.plot([0, 1], [0, 1], color='navy', lw=1, linestyle='--')
 plt.xlim([0.0, 1.0])
@@ -105,5 +105,26 @@ plt.savefig('roc_curves.png', dpi=300, bbox_inches='tight')  # bbox_inches='tigh
 # Mostrar la figura
 plt.show()
 
+
+# %%
+
+import pandas as pd
+
+# Leer el archivo CSV con el orden deseado
+order_df = pd.read_csv('SCX_prediction_amp.csv')  # Este es el archivo con el orden deseado
+order = order_df['Sequence'].tolist()  # Obtener la lista de secuencias en el orden deseado
+
+# Leer el archivo CSV que necesitas reorganizar
+data_df = pd.read_excel('indep_testing_predictions.xlsx')  # Este es el archivo que quieres organizar
+
+# Asegurarse de que todas las secuencias del archivo a reorganizar estén en el archivo de orden
+# Para evitar errores si hay secuencias faltantes en el archivo a reorganizar
+data_df = data_df[data_df['Sequence'].isin(order)]
+
+# Reordenar el dataframe de acuerdo al orden del archivo de referencia
+data_df = data_df.set_index('Sequence').reindex(order).reset_index()
+
+# Guardar el resultado en un nuevo archivo CSV
+data_df.to_csv('indep_testing_predictions.csv', index=False)
 
 # %%
