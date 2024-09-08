@@ -32,7 +32,7 @@ start_time = time.time()
 #7) 'xbridge_amide'
 #8) 'misc_dia'
 
-datasets = [
+''' datasets = [
             'hela_mod',
             'yeast_unmod',
             'scx',
@@ -42,9 +42,14 @@ datasets = [
             'xbridge_amide',
             'misc_dia',
             ]
+ '''
+datasets = [
+            'hela_mod3'
+            ]
+
 
 for name_dataset in datasets:
-    if name_dataset in ['hela_mod', 'yeast_unmod', 'misc_dia']:
+    if name_dataset in ['hela_mod', 'hela_mod3','yeast_unmod', 'misc_dia']:
         time_unit = 's'
     else:
         time_unit = 'min'
@@ -252,10 +257,10 @@ for name_dataset in datasets:
     plt.xlim([min(target_all_validation.cpu()), max(target_all_validation.cpu())])
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.title(f'Scatter Plot Validation Set\n{name_dataset} Dataset', fontsize=18, pad=30)
-    plt.xlabel(f"True Retention Time ({time_unit})", fontsize=18, labelpad=10)
-    plt.ylabel(f"Predicted Retention Time ({time_unit})", fontsize=18, labelpad=10)
-    plt.xticks(fontsize=14)
-    plt.yticks(fontsize=14)
+    plt.xlabel(f"True Retention Time ({time_unit})", fontsize=14, labelpad=10)
+    plt.ylabel(f"Predicted Retention Time ({time_unit})", fontsize=14, labelpad=10)
+    plt.xticks(fontsize=10)
+    plt.yticks(fontsize=10)
     plt.savefig(f'results/RT/{name_dataset}_scatter_validation.png', format="png", dpi=300, bbox_inches='tight')
     plt.show()
     

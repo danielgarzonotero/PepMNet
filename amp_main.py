@@ -8,7 +8,7 @@ from torch_geometric.explain import CaptumExplainer, Explainer
 from sklearn.model_selection import KFold
 from torch.utils.data import  Subset
 import numpy as np
-from collections import OrderedDict
+
 
 import pandas as pd
 from src.device import device_info
@@ -118,6 +118,7 @@ kfold = KFold(n_splits=k_folds, shuffle=True, random_state=24)
 # List to store validation losses for each fold
 fold_val_losses = []
 threshold = 0.5
+seeds = [0,3,9,1,21]
 
 # Iterate over the K-Folds
 for fold, (train_ids, val_ids) in enumerate(kfold.split(ruiz_training_datataset)):
@@ -125,6 +126,8 @@ for fold, (train_ids, val_ids) in enumerate(kfold.split(ruiz_training_datataset)
     print(f'  Train IDs: {len(train_ids)} samples')
     print(f'  Val IDs:   {len(val_ids)} samples')
 
+    seed = seeds[fold]
+    
     model, optimizer = initialize_model(initial_dim_gcn,
                                         edge_dim_feature,
                                         hidden_dim_nn_1,
@@ -137,7 +140,7 @@ for fold, (train_ids, val_ids) in enumerate(kfold.split(ruiz_training_datataset)
                                         
                                         learning_rate,
                                         weight_decay,
-                                        seed = fold
+                                        seed = seed
                                         )
 
     # Crear subsets y dataloaders

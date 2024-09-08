@@ -1,5 +1,6 @@
 Metric,Value
 atlantis_silica_dataset_results_r2_validation,0.9800397724827256
+hela_mod3_dataset_results_r2_validation,0.9462821160941884
 hela_mod_dataset_results_r2_validation,0.9536567884316056
 luna_hilic_dataset_results_r2_validation,0.98292053180534
 luna_silica_dataset_results_r2_validation,0.9856101512770056
