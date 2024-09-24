@@ -6,6 +6,7 @@ The **.pt** files must be saved in the directies:
 
 **Retention Time Prediction:**
 weights_RT/
+
 **Antimicrobial Classification:**
 weights_AMP/
 
