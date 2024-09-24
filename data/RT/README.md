@@ -4,7 +4,7 @@ The processed datasets used in this project can be found here:
 https://zenodo.org/communities/pepmnet/records?q=&l=list&p=1&s=10&sort=newest.
 
 For each dataset, the 3 .pt files must be saved in the directory:
-data/RT/*datasetname*_processed/processed.
+data/RT/***datasetname***_processed/processed.
 
 # References
 
