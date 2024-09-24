@@ -1,3 +1,13 @@
+# Processed Datasets
+
+The processed datasets used in this project can be found here:
+https://zenodo.org/communities/pepmnet/records?q=&l=list&p=1&s=10&sort=newest.
+
+For each dataset, the 3 .pt files must be saved in the directory:
+data/RT/*datasetname*_processed/processed.
+
+# References
+
 | File Name            | HPLC Type | Reference            |
 |----------------------|-----------|----------------------|
 | hela_mod.csv          | RPLC      | Sharma et al.        |
@@ -8,8 +18,6 @@
 | xbridge_amide.csv     | HILIC     | Spicer et al.        |
 | atlantis_silica.csv   | HILIC     | Spicer et al.        |
 | luna_silica.csv       | HILIC     | Spicer et al.        |
-
-# References
 
 - **Nagaraj, N.; Kulak, N. A.; Cox, J.; Neuhauser, N.; Mayr, K.; Hoerning, O.; Vorm, O.; Mann, M.**  
   *System-Wide Perturbation Analysis with Nearly Complete Coverage of the Yeast Proteome by Single-Shot Ultra HPLC Runs on a Bench Top Orbitrap.* Mol. Cell. Proteomics 2012, 11 (3), M111.013722 DOI: [10.1074/mcp.M111.013722](https://doi.org/10.1074/mcp.M111.013722)
