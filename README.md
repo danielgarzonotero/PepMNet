@@ -74,7 +74,7 @@ All datasets were implemented and curated from:
 
 Please ensure to cite the respective papers if you use these datasets.
 
-### Pretrained models
+# Pretrained models
 
 Pretrained models used in this project can be found here: https://zenodo.org/communities/pepmnet/records?q=&l=list&p=1&s=10&sort=newest.
 
