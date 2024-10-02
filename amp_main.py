@@ -178,7 +178,7 @@ for fold, (train_ids, val_ids) in enumerate(kfold.split(ruiz_training_datataset)
             best_fold_index = fold  # Actualizar el índice del fold con mejor pérdida de validación
     
     # Guardar el modelo con la mejor pérdida de validación para este fold
-    torch.save(best_model_fold, f"weights_AMP/best_model_weights_fold_{fold+1}.pth")
+    torch.save(best_model_fold, f"weights/AMP/best_model_weights_fold_{fold+1}.pth")
     print(f'  Best model in this fold: best_model_weights_fold_{fold+1}.pth')
     
     # Almacenar la mejor pérdida de validación para este fold
@@ -196,7 +196,7 @@ for fold, (train_ids, val_ids) in enumerate(kfold.split(ruiz_training_datataset)
     plt.savefig(f'results/AMP/loss_curve_fold_{fold+1}.png', dpi=216)
     plt.show()
     
-    weights_file = f"weights_AMP/best_model_weights_fold_{fold+1}.pth"
+    weights_file = f"weights/AMP/best_model_weights_fold_{fold+1}.pth"
     
     # ------------------------------------////////// Training set /////////////---------------------------------------------------
     training_sequences, training_target, training_logits, training_pred_csv, training_scores = amp_predict_test(
@@ -304,7 +304,7 @@ all_scores = []
 start_time_testing = time.time()
 
 for fold in folds:
-    weights_file = f"weights_AMP/best_model_weights_fold_{fold}.pth"
+    weights_file = f"weights/AMP/best_model_weights_fold_{fold}.pth"
     
     # Realizar la predicción usando el modelo cargado
     test_sequences, test_target, _, test_pred_csv, test_scores = amp_predict_test(

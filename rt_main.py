@@ -159,7 +159,7 @@ for name_dataset in datasets:
         # Save the model's weights if the current validation loss is the best so far.
         if train_loss < best_val_loss:
             best_val_loss = train_loss
-            torch.save(model.state_dict(), "weights_RT/{}_best_model_weights.pth".format(name_dataset))
+            torch.save(model.state_dict(), "weights/RT/{}_best_model_weights.pth".format(name_dataset))
             
             
     finish_time_training = time.time()
@@ -181,7 +181,7 @@ for name_dataset in datasets:
     plt.show()
     
     # Retrieving Best Model Weights:
-    weights_file = "weights_RT/{}_best_model_weights.pth".format(name_dataset)
+    weights_file = "weights/RT/{}_best_model_weights.pth".format(name_dataset)
     
     # ////////////// Training Set //////////////:
     # Obtain predictions on the training set using the best model.

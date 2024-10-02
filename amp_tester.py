@@ -77,7 +77,7 @@ all_scores = []
 folds = [1, 2, 3, 4, 5]
 
 for fold in folds:
-    weights_file = f"weights_AMP/model_0_3_9_1_21/best_model_weights_fold_{fold}.pth"
+    weights_file = f"weights/AMP/model_0_3_9_1_21/best_model_weights_fold_{fold}.pth"
     
     if has_targets:
         # Realizar la predicción usando el modelo cargado
