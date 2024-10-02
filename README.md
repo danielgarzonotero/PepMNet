@@ -1,7 +1,7 @@
 # PepMNet
 ![](https://github.com/danielgarzonotero/PepMNet/blob/main/PepMNet.gif)
 
-# Processed Datasets
+# 1. Processed Datasets
 
 ## AMP
 
@@ -74,7 +74,7 @@ All datasets were implemented and curated from:
 
 Please ensure to cite the respective papers if you use these datasets.
 
-# Pretrained models
+# 2. Pretrained models
 
 Pretrained models used in this project can be found here: https://zenodo.org/communities/pepmnet/records?q=&l=list&p=1&s=10&sort=newest.
 
