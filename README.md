@@ -3,7 +3,7 @@
 
 # Processed Datasets
 
-### AMP
+## AMP
 
 The processed datasets used in this project can be found here:
 https://zenodo.org/communities/pepmnet/records?q=&l=list&p=1&s=10&sort=newest.
@@ -24,7 +24,7 @@ DOI: [https://doi.org/10.3390/membranes12070708](https://doi.org/10.3390/membran
 
 Please ensure to cite this paper if you use these datasets.
 
-### RT
+## RT
 
 **Processed Datasets**
 
