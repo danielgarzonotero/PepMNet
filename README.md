@@ -1,9 +1,9 @@
 # PepMNet
 ![](https://github.com/danielgarzonotero/PepMNet/blob/main/PepMNet.gif)
 
-### Processed Datasets
+# Processed Datasets
 
-# AMP
+### AMP
 
 The processed datasets used in this project can be found here:
 https://zenodo.org/communities/pepmnet/records?q=&l=list&p=1&s=10&sort=newest.
@@ -11,7 +11,7 @@ https://zenodo.org/communities/pepmnet/records?q=&l=list&p=1&s=10&sort=newest.
 For each dataset, the 3 .pt files must be saved in the directory:
 data/AMP/dataset Ruiz/***"datasetname"***_processed/processed/
 
-# Reference 
+**Reference**
 The datasets used in this project were sourced from the following reference:
 
 **Ruiz Puentes, P.; Henao, M. C.; Cifuentes, J.; Muñoz-Camargo, C.; Reyes, L. H.; Cruz, J. C.; Arbeláez, P.**  
@@ -20,9 +20,9 @@ DOI: [https://doi.org/10.3390/membranes12070708](https://doi.org/10.3390/membran
 
 Please ensure to cite this paper if you use these datasets.
 
-# RT
+### RT
 
-# Processed Datasets
+**Processed Datasets**
 
 The processed datasets used in this project can be found here:
 https://zenodo.org/communities/pepmnet/records?q=&l=list&p=1&s=10&sort=newest.
@@ -30,7 +30,7 @@ https://zenodo.org/communities/pepmnet/records?q=&l=list&p=1&s=10&sort=newest.
 For each dataset, the 3 .pt files must be saved in the directory:
 data/RT/***"datasetname"***_processed/processed/
 
-# References
+**References**
 
 | File Name            | HPLC Type | Reference            |
 |----------------------|-----------|----------------------|
@@ -58,7 +58,7 @@ data/RT/***"datasetname"***_processed/processed/
 - **Spicer, V.; Krokhin, O. V.**  
   *Peptide Retention Time Prediction in Hydrophilic Interaction Liquid Chromatography. Comparison of Separation Selectivity between Bare Silica and Bonded Stationary Phases.* J. Chromatogr. A 2018, 1534, 75–84, DOI: [10.1016/j.chroma.2017.12.046](https://doi.org/10.1016/j.chroma.2017.12.046)
 
-# Acknowledgements
+**Acknowledgements**
 
 All datasets were implemented and curated from:
 
