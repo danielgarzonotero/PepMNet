@@ -95,50 +95,14 @@ def rt_validation(model, device, dataloader, epoch):
     return loss_collect
 
 
-def rt_predict_test(model, dataloader, device, weights_file):
+def rt_predict_test(model, dataloader, device, weights_file, has_targets):
     
     model.eval()
     model.load_state_dict(torch.load(weights_file))
     
     x_all = []
-    y_all = []
-    pred_all = []
-    
-    # Remove gradients:
-    with torch.no_grad():
-        
-        # Looping over the dataloader allows us to pull out or input/output data:
-        for batch in dataloader:
-            batch = batch.to(device)
-            # Make a prediction:
-            pred = model(
-                        batch.x,
-                        batch.edge_index,
-                        batch.edge_attr,
-                        batch.batch,
-                        batch.cc,
-                        batch.monomer_labels,
-                        batch.aminoacids_features,
-                        batch.amino_index
-                        )
-            
-            x_all.extend(batch.sequence)
-            y_all.append(batch.y.to(device))
-            pred_all.append(pred.to(device))
-
-    
-    y_all = torch.concat(y_all)
-    pred_all = torch.concat(pred_all)
-    
-    return x_all, y_all, pred_all
-
-def rt_tester(model, dataloader, device, weights_file):
-    
-    model.eval()
-    model.load_state_dict(torch.load(weights_file))
-    
-    x_all = []
-    pred_all = []
+    y_all = [] if has_targets else None
+    pred_all = [] 
     
     # Remove gradients:
     with torch.no_grad():
@@ -160,8 +124,21 @@ def rt_tester(model, dataloader, device, weights_file):
             
             x_all.extend(batch.sequence)
             pred_all.append(pred.to(device))
-
+            
+            if has_targets:
+                y_all.append(batch.y.to(device)) 
+            else:
+                None
+                
     pred_all = torch.concat(pred_all)
+    if has_targets:
+        y_all = torch.concat(y_all) 
+    else:
+        None
     
-    return x_all, pred_all
+    
+    if has_targets:
+        return x_all, y_all, pred_all
+    else:
+        return x_all, pred_all
 

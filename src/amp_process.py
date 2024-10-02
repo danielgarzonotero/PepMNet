@@ -4,7 +4,14 @@ import torch.nn.functional as F
 import numpy as np
 
 
-def amp_train(model, device, dataloader, optim, epoch):
+def amp_train(
+                model,
+                device,
+                dataloader,
+                optim,
+                epoch
+                ):
+    
     model.train()
     
     loss_func = torch.nn.BCEWithLogitsLoss() 
@@ -48,7 +55,12 @@ def amp_train(model, device, dataloader, optim, epoch):
     ) 
     return loss_collect    
 
-def amp_validation(model, device, dataloader, epoch):
+def amp_validation(
+                    model,
+                    device,
+                    dataloader,
+                    epoch
+                    ):
 
     model.eval()
     loss_collect = 0
@@ -92,7 +104,14 @@ def amp_validation(model, device, dataloader, epoch):
     return loss_collect
 
 
-def amp_predict_test(model, dataloader, device, weights_file, threshold, has_targets=True):
+def amp_predict_test(
+                        model,
+                        dataloader,
+                        device,
+                        weights_file,
+                        threshold,
+                        has_targets
+                    ):
     model.eval()
     model.load_state_dict(torch.load(weights_file, map_location=device))
     

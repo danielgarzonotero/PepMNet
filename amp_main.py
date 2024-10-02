@@ -30,12 +30,14 @@ datasets = {
             'test_ruiz': GeoDataset_1(raw_name='data/AMP/dataset Ruiz/Test_clean.csv',
                                             root='',
                                             index_x=0,
-                                            index_y=1
+                                            index_y=1,
+                                            has_targets= True
                                             ),
             'train_ruiz': GeoDataset_1(raw_name='data/AMP/dataset Ruiz/Train_clean.csv',
                                             root='',
                                             index_x=0,
-                                            index_y=1
+                                            index_y=1,
+                                            has_targets= True
                                             )
             }
 
@@ -202,7 +204,8 @@ for fold, (train_ids, val_ids) in enumerate(kfold.split(ruiz_training_datataset)
                                                                                                     tun_train_dataloader,
                                                                                                     device,
                                                                                                     weights_file,  # Usar el modelo guardado del fold actual
-                                                                                                    threshold
+                                                                                                    threshold,
+                                                                                                    has_targets = True
                                                                                                     )
     
     # Guardar un archivo CSV con los valores de predicción
@@ -234,7 +237,8 @@ for fold, (train_ids, val_ids) in enumerate(kfold.split(ruiz_training_datataset)
                                                                                                                         tun_val_dataloader,
                                                                                                                         device,
                                                                                                                         weights_file,  # Usar el modelo guardado del fold actual
-                                                                                                                        threshold
+                                                                                                                        threshold,
+                                                                                                                        has_targets = True
                                                                                                                         )
     
     # Guardar un archivo CSV con los valores de predicción
@@ -309,6 +313,7 @@ for fold in folds:
                                                                                     device,
                                                                                     weights_file,
                                                                                     threshold,
+                                                                                    has_targets = True
                                                                                 )
     
     # Almacenar secuencias y targets (solo una vez)

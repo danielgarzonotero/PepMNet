@@ -32,7 +32,7 @@ start_time = time.time()
 #7) 'xbridge_amide'
 #8) 'misc_dia'
 
-''' datasets = [
+datasets = [
             'hela_mod',
             'yeast_unmod',
             'scx',
@@ -41,10 +41,6 @@ start_time = time.time()
             'atlantis_silica',
             'xbridge_amide',
             'misc_dia',
-            ]
- '''
-datasets = [
-            'hela_mod3'
             ]
 
 
@@ -65,6 +61,7 @@ for name_dataset in datasets:
                                             root='',
                                             index_x=0,
                                             index_y=1,
+                                            has_targets=True
                                             )
                 }
     
@@ -188,7 +185,12 @@ for name_dataset in datasets:
     
     # ////////////// Training Set //////////////:
     # Obtain predictions on the training set using the best model.
-    input_all_train, target_all_train, pred_all_train = rt_predict_test(model, train_dataloader, device, weights_file)
+    input_all_train, target_all_train, pred_all_train = rt_predict_test(model,
+                                                                        train_dataloader,
+                                                                        device,
+                                                                        weights_file,
+                                                                        has_targets=True
+                                                                        )
     
     # Saving Predictions as Excel:
     # Save the predictions, targets, and sequences as an Excel file.
@@ -227,7 +229,12 @@ for name_dataset in datasets:
     #////////////// Validation Set //////////////:
     # Predictions on Validation Set:
     # Obtain predictions on the validation set using the best model.
-    input_all_validation, target_all_validation, pred_all_validation = rt_predict_test(model, val_dataloader, device, weights_file)
+    input_all_validation, target_all_validation, pred_all_validation = rt_predict_test( model,
+                                                                                        val_dataloader,
+                                                                                        device,
+                                                                                        weights_file,
+                                                                                        has_targets=True
+                                                                                        )
     
     # Saving Predictions as Excel:
     # Save the predictions, targets, and sequences of the validation set as an Excel file.
