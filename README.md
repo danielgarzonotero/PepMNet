@@ -86,7 +86,7 @@ weights_RT/
 **Antimicrobial Classification:**
 weights_AMP/
 
-![](ruta/weigths/weigths.png)
+![](weigths/weigths.png)
 
 
 
