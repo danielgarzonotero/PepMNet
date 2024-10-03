@@ -6,7 +6,7 @@
 ## AMP
 
 The processed datasets used in this project can be found here:
-https://zenodo.org/communities/pepmnet/records?q=&l=list&p=1&s=10&sort=newest.
+https://zenodo.org/communities/pepmnet
 
 
 For each dataset, the 3 .pt files must be saved in the directory:
@@ -30,7 +30,7 @@ Please ensure to cite this paper if you use these datasets.
 **Processed Datasets**
 
 The processed datasets used in this project can be found here:
-https://zenodo.org/communities/pepmnet/records?q=&l=list&p=1&s=10&sort=newest.
+https://zenodo.org/communities/pepmnet
 
 For each dataset, the 3 .pt files must be saved in the directory:
 data/RT/***"datasetname"***_processed/processed/
@@ -78,7 +78,7 @@ Please ensure to cite the respective papers if you use these datasets.
 
 # 2. Pretrained models
 
-Pretrained models used in this project can be found here: https://zenodo.org/communities/pepmnet/records?q=&l=list&p=1&s=10&sort=newest.
+Pretrained models used in this project can be found here: https://zenodo.org/communities/pepmnet
 
 The **.pt** files must be saved in the directies: 
 
