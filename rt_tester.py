@@ -73,7 +73,7 @@ model = rt_pepmnet(
                 dropout
             ).to(device)
 
-weights_file="weights/RT/a1/scx_best_model_weights.pth"
+weights_file="weights/RT/a1/scx_best_model_weights.pth" #TODO
 
 
 if has_targets:
