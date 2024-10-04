@@ -23,7 +23,7 @@ device = device_information.device
 start_time = time.time()
     
 # Define the dataset name
-#1) 'hela_mod'
+#1) 'hela_mod3'
 #2) 'yeast_unmod'
 #3) 'scx'
 #4) 'luna_hilic'
@@ -33,7 +33,7 @@ start_time = time.time()
 #8) 'misc_dia'
 
 datasets = [
-            'hela_mod',
+            'hela_mod3',
             'yeast_unmod',
             'scx',
             'luna_hilic',
@@ -132,7 +132,7 @@ for name_dataset in datasets:
     
     # ////////////// Training Loop ////////////// :
     
-    print("\n/////// Training ////////")
+    print("\n/////// Training - {} ////////".format(name_dataset))
     for epoch in range(1, number_of_epochs+1):
         
         # Train the model for one epoch and calculate training loss.
