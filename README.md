@@ -1,7 +1,28 @@
 # PepMNet
 ![](https://github.com/danielgarzonotero/PepMNet/blob/main/PepMNet.gif)
 
-# 1. Processed Datasets
+# 1. Environment Setup
+
+This project includes an `environment.yml` file for setting up the development environment.
+
+### Create the Environment
+
+i. Clone this repository:
+
+   ```bash
+   git clone https://github.com/danielgarzonotero/PepMNet.git
+   cd PepMNet
+
+ii. Create the environment:
+
+conda env create -f environment.yml
+
+iii. Activate the environment:
+
+conda activate pepmnet
+
+
+# 2. Processed Datasets
 
 ## AMP
 
@@ -76,7 +97,7 @@ All datasets were implemented and curated from:
 
 Please ensure to cite the respective papers if you use these datasets.
 
-# 2. Pretrained models
+# 3. Pretrained models
 
 Pretrained models used in this project can be found here: https://zenodo.org/communities/pepmnet
 
