@@ -7,21 +7,24 @@ This project includes an `environment.yml` file for setting up the development e
 
 ### Create the Environment
 
-i. Clone this repository:
+i- Clone this repository:
 
-   ```bash
-   git clone https://github.com/danielgarzonotero/PepMNet.git
-   cd PepMNet
+```bash
+git clone https://github.com/danielgarzonotero/PepMNet.git
+```
+```bash
+cd PepMNet
+```
+ii- Create the environment:
 
-ii. Create the environment:
-
+```bash
 conda env create -f environment.yml
+```
+iii- Activate the environment:
 
-iii. Activate the environment:
-
+```bash
 conda activate pepmnet
-
-
+```
 # 2. Processed Datasets
 
 ## AMP
