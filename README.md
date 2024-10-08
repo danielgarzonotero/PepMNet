@@ -126,9 +126,8 @@ To test independent sequences or datasets using the ensemble model for antimicro
 To test independent sequences or datasets for retention time (RT) prediction. Users can select from 1 of 8 available models from avaliable. This script processes CSV files with or without RT target values.
 
 # 5. Retraining 
-For retrain the model  or reproces the datasets please refer to [`amp_main.py`](https://github.com/danielgarzonotero/PepMNet/blob/main/amp_main.py)  and [`rt_main.py`](https://github.com/danielgarzonotero/PepMNet/blob/main/rt_main.py)
 
-
+To retrain the model or reprocess the datasets, please refer to the scripts [`amp_main.py`](https://github.com/danielgarzonotero/PepMNet/blob/main/amp_main.py) for antimicrobial peptide classification and [`rt_main.py`](https://github.com/danielgarzonotero/PepMNet/blob/main/rt_main.py) for retention time prediction. These scripts handle the full training process, including data preprocessing, model configuration, and training. You can adjust hyperparameters, dataset paths, and other settings within the scripts to suit your specific requirements.
 
 
 
