@@ -2,7 +2,6 @@
 import time
 start_time = time.time() # Start the timer to measure the execution time
 import torch
-import torch
 import pandas as pd
 from torch_geometric.loader import DataLoader
 from src.data import GeoDataset_1

@@ -115,6 +115,16 @@ weights_AMP/
 ![](weigths/weigths.png)
 
 
+# 4. Testing Independent Datasets
+
+[`amp_tester.py`](https://github.com/danielgarzonotero/PepMNet/blob/main/amp_tester.py): 
+
+To test independent sequences or datasets using THE ensemble model for antimicrobial peptide (AMP) classification. It can be used to evaluate CSV files containing either labeled sequences (with associated antimicrobial activity) or sequences without labels.
+
+[`rt_tester.py`](https://github.com/danielgarzonotero/PepMNet/blob/main/rt_tester.py) : 
+
+To test independent sequences or datasets for retention time (RT) prediction. Users can select from 1 of 8 available models from avaliable. This script processes CSV files with or without RT target values.
+
 
 
 
