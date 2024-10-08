@@ -85,7 +85,7 @@ for name_dataset in datasets:
     print('Number of EDGES features: ', training_validation_datataset.num_edge_features)
     
     finish_time_preprocessing = time.time()
-    time_preprocessing = (finish_time_preprocessing - start_time) / 60  # TODO revisar el calculo de los tiempos
+    time_preprocessing = (finish_time_preprocessing - start_time) / 60  
     
     torch.manual_seed(0)
     

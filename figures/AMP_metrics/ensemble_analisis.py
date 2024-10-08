@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Cargar el archivo Excel (reemplaza 'indep_testing_predictions.xlsx' con la ruta correcta)
-df = pd.read_excel('ensemble_testing_prediction.xlsx')
+df = pd.read_excel('/home/vvd9fd/Documents/Bilodeau Group/Codes/0.Research/Hierarchical-Graph-Neural-Network/results/AMP/model_0_1_3_6_21/testing_prediction.xlsx')
 
 # Extraer los puntajes de los modelos (columnas 3 a 7)
 model_scores = df[['Scores model 1', 'Scores model 2', 'Scores model 3', 'Scores model 4', 'Scores model 5']]
@@ -49,7 +49,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Cargar el archivo CSV (reemplaza 'indep_testing_predictions.xlsx' con la ruta correcta)
-df = pd.read_excel('ensemble_testing_prediction.xlsx')
+df = pd.read_excel('/home/vvd9fd/Documents/Bilodeau Group/Codes/0.Research/Hierarchical-Graph-Neural-Network/results/AMP/model_0_1_3_6_21/testing_prediction.xlsx')
 
 # Extraer la columna de desviación estándar
 std_devs = df['Standard deviation']

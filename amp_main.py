@@ -8,15 +8,15 @@ from torch_geometric.explain import CaptumExplainer, Explainer
 from sklearn.model_selection import KFold
 from torch.utils.data import  Subset
 import numpy as np
-
-
 import pandas as pd
+
 from src.device import device_info
 from src.data import GeoDataset_1
 from src.amp_model import amp_pepmnet
 from src.amp_process import amp_train, amp_validation, amp_predict_test
 from src.amp_evaluation_metrics import amp_evaluate_model
 
+# Get device information (GPU or CPU) and set it for model and data
 device_information = device_info()
 print(device_information)
 device = device_information.device
@@ -25,7 +25,12 @@ start_time = time.time()
 
 ## SET UP DATALOADERS: 
 
-# Build starting dataset: 
+# Load/Processing the dataset using GeoDataset_1, specifying the file paths for train and test datasets
+# raw_name: Path to the CSV file containing the data
+# index_x: The column index for the sequences in the CSV file
+# index_y: The column index for the target property (AMP classification, 1 or 0)
+# has_targets: Set to True because this is a supervised task with known targets (AMP classification)
+
 datasets = {
             'test_ruiz': GeoDataset_1(raw_name='data/AMP/dataset Ruiz/Test_clean.csv',
                                             root='',
@@ -41,20 +46,23 @@ datasets = {
                                             )
             }
 
-testing_datataset = datasets['test_ruiz']
+# Assign the test dataset for later use in model evaluation
+ruiz_testing_datataset = datasets['test_ruiz']
 
-print('Number of NODES features: ', testing_datataset.num_features)
-print('Number of EDGES features: ', testing_datataset.num_edge_features)
+# Print the number of features for nodes and edges in the graph dataset (important for setting model dimensions)
+print('Number of NODES features: ', ruiz_testing_datataset.num_features)
+print('Number of EDGES features: ', ruiz_testing_datataset.num_edge_features)
 
+# Calculate time spent on preprocessing the data
 finish_time_preprocessing = time.time()
 time_preprocessing = (finish_time_preprocessing - start_time) / 60 
 
-# Train with a random seed to initialize weights:
 
-# Set up model:
-initial_dim_gcn = testing_datataset.num_features
-edge_dim_feature = testing_datataset.num_edge_features
+# Set model input dimensions based on the number of node and edge features from the dataset
+initial_dim_gcn = ruiz_testing_datataset.num_features
+edge_dim_feature = ruiz_testing_datataset.num_edge_features
 
+# Define hidden dimensions 
 hidden_dim_nn_1 = 20
 hidden_dim_nn_2 = 10
 
@@ -65,7 +73,9 @@ hidden_dim_fcn_2 = 100
 hidden_dim_fcn_3 = 10
 dropout = 0
 
-def initialize_model(initial_dim_gcn,
+# Define a function to initialize the model with the specified architecture and optimizer
+def initialize_model(
+                    initial_dim_gcn,
                     edge_dim_feature,
                     hidden_dim_nn_1,
                     hidden_dim_nn_2,
@@ -108,18 +118,23 @@ learning_rate = 1E-3
 weight_decay = 1E-5 
 batch_size = 100
 
-ruiz_testing_datataset = datasets['test_ruiz']
+# Testing dataset setup:
 ruiz_test_dataloader = DataLoader(ruiz_testing_datataset , batch_size, shuffle=False)
 
+# Start timing for training process:
 start_time_training = time.time()
+
+# Training dataset setup:
 ruiz_training_datataset = datasets['train_ruiz']
 number_of_epochs = 500
-k_folds = 5  # Número de particiones para K-Fold Cross-Validation
+k_folds = 5  # Number of folds for K-Fold Cross-Validation
 kfold = KFold(n_splits=k_folds, shuffle=True, random_state=24)
 
 # List to store validation losses for each fold
 fold_val_losses = []
+# Classification threshold for AMP prediction:
 threshold = 0.5
+# Seed values for each fold to ensure reproducibility:
 seeds = [0,3,9,1,21]
 
 # Iterate over the K-Folds
@@ -130,6 +145,7 @@ for fold, (train_ids, val_ids) in enumerate(kfold.split(ruiz_training_datataset)
 
     seed = seeds[fold]
     
+    # Initialize the model and optimizer for the current fold:
     model, optimizer = initialize_model(initial_dim_gcn,
                                         edge_dim_feature,
                                         hidden_dim_nn_1,
@@ -145,47 +161,47 @@ for fold, (train_ids, val_ids) in enumerate(kfold.split(ruiz_training_datataset)
                                         seed = seed
                                         )
 
-    # Crear subsets y dataloaders
+    # Create subsets and dataloaders for training and validation:
     train_subsampler = Subset(ruiz_training_datataset, train_ids)
     val_subsampler = Subset(ruiz_training_datataset, val_ids)
     tun_train_dataloader = DataLoader(train_subsampler, batch_size=batch_size, shuffle=True)
     tun_val_dataloader = DataLoader(val_subsampler, batch_size=batch_size, shuffle=True)
     
-    # Listas para almacenar pérdidas
+    # Lists to store losses for training and validation:
     train_losses = []
     val_losses = []
-    best_val_loss = float('inf')
+    best_val_loss = float('inf') # Initialize best validation loss with infinity
     best_model_fold = None
     
     # Entrenamiento y validación por épocas
     for epoch in range(1, number_of_epochs+1):
         print(f'  Epoch {epoch}/{number_of_epochs}:')
         
-        # Entrenamiento
+        # Training step:
         model.train()
         train_loss = amp_train(model, device, tun_train_dataloader, optimizer, epoch)
         train_losses.append(train_loss)
         
-        # Validación
+        # Validation step:
         model.eval()
         val_loss = amp_validation(model, device, tun_val_dataloader, epoch)
         val_losses.append(val_loss)
         
-        # Guardar el mejor modelo según la pérdida de validación
+        # Save the best model based on validation loss:
         if val_loss < best_val_loss:
-            best_val_loss = val_loss
-            best_model_fold = model.state_dict()
-            best_fold_index = fold  # Actualizar el índice del fold con mejor pérdida de validación
+            best_val_loss = val_loss # Update best validation loss
+            best_model_fold = model.state_dict() # Save the best model weights
+            best_fold_index = fold  # Update the fold index for the best model
     
-    # Guardar el modelo con la mejor pérdida de validación para este fold
+    # Save the best model weights for the current fold:
     torch.save(best_model_fold, f"weights/AMP/best_model_weights_fold_{fold+1}.pth")
     print(f'  Best model in this fold: best_model_weights_fold_{fold+1}.pth')
     
-    # Almacenar la mejor pérdida de validación para este fold
+    # Store the best validation loss for the current fold:
     fold_val_losses.append((fold, best_val_loss))
     print(f'  Lowest validation loss in this fold: {best_val_loss:.4f}\n')
     
-    # Graficar la curva de pérdida para este fold
+    # Plot the loss curves for the current fold:
     plt.figure(figsize=(10, 6))
     plt.plot(train_losses, label='Training loss', color='darkorange')
     plt.plot(val_losses, label='Validation loss', color='seagreen')
@@ -196,19 +212,21 @@ for fold, (train_ids, val_ids) in enumerate(kfold.split(ruiz_training_datataset)
     plt.savefig(f'results/AMP/loss_curve_fold_{fold+1}.png', dpi=216)
     plt.show()
     
+    # Importing the best model weights file path for reference:
     weights_file = f"weights/AMP/best_model_weights_fold_{fold+1}.pth"
     
     # ------------------------------------////////// Training set /////////////---------------------------------------------------
+    # Predict on the training set using the saved model from the current fold
     training_sequences, training_target, training_logits, training_pred_csv, training_scores = amp_predict_test(
                                                                                                     model,
                                                                                                     tun_train_dataloader,
                                                                                                     device,
-                                                                                                    weights_file,  # Usar el modelo guardado del fold actual
+                                                                                                    weights_file,  # Use the saved model from the current fold
                                                                                                     threshold,
                                                                                                     has_targets = True
                                                                                                     )
     
-    # Guardar un archivo CSV con los valores de predicción
+    # Save a CSV file with the prediction values for the training set
     prediction_train_set = {
                             'Sequence': training_sequences,
                             'Target': training_target,
@@ -216,10 +234,11 @@ for fold, (train_ids, val_ids) in enumerate(kfold.split(ruiz_training_datataset)
                             'Prediction': training_pred_csv
                             }
     
+    # Convert the predictions into a DataFrame and save as an Excel file
     df = pd.DataFrame(prediction_train_set)
     df.to_excel(f'results/AMP/training_prediction_fold_{fold+1}.xlsx', index=False)
     
-    # Evaluar el modelo en el conjunto de entrenamiento y obtener métricas
+    # Evaluate the model on the training set and obtain metrics
     TP_training, TN_training, FP_training, FN_training, ACC_training, PR_training, \
     SN_training, SP_training, F1_training, mcc_training, roc_auc_training, ap_training = \
     amp_evaluate_model(
@@ -232,16 +251,17 @@ for fold, (train_ids, val_ids) in enumerate(kfold.split(ruiz_training_datataset)
                         )
     
     # -------------------------------------------- ////////// Validation Set //////////-------------------------------------------------
+    # Predict on the validation set using the saved model from the current fold
     validation_sequences, validation_target, validation_pred, validation_pred_csv, validation_scores = amp_predict_test(
                                                                                                                         model,
                                                                                                                         tun_val_dataloader,
                                                                                                                         device,
-                                                                                                                        weights_file,  # Usar el modelo guardado del fold actual
+                                                                                                                        weights_file,  # Use the saved model from the current fold
                                                                                                                         threshold,
                                                                                                                         has_targets = True
                                                                                                                         )
     
-    # Guardar un archivo CSV con los valores de predicción
+    # Save a CSV file with the prediction values for the validation set
     prediction_validation_set = {
                                 'Sequence': validation_sequences,
                                 'Target': validation_target,
@@ -252,7 +272,7 @@ for fold, (train_ids, val_ids) in enumerate(kfold.split(ruiz_training_datataset)
     df = pd.DataFrame(prediction_validation_set)
     df.to_excel(f'results/AMP/validation_prediction_fold_{fold+1}.xlsx', index=False)
     
-    # Evaluar el modelo en el conjunto de validación y obtener métricas
+    # Evaluate the model on the validation set and obtain metrics
     TP_validation, TN_validation, FP_validation, FN_validation, ACC_validation, PR_validation, \
     SN_validation, SP_validation, F1_validation, mcc_validation, roc_auc_validation, ap_validation = \
     amp_evaluate_model( 
@@ -263,6 +283,7 @@ for fold, (train_ids, val_ids) in enumerate(kfold.split(ruiz_training_datataset)
                         device=device
                         )
     
+    # Print metrics for the training set in this fold
     print(f'///// Fold {fold+1}-Training Metrics: //////')
     print(f'  Accuracy: {ACC_training:.4f}')
     print(f'  Precision: {PR_training:.4f}')
@@ -272,6 +293,7 @@ for fold, (train_ids, val_ids) in enumerate(kfold.split(ruiz_training_datataset)
     print(f'  ROC AUC: {roc_auc_training:.4f}')
     print(f'  Average Precision: {ap_training:.4f}\n')
     
+    # Print metrics for the validation set in this fold
     print(f'///// Fold {fold+1}-Validation Metrics: /////')
     print(f'  Accuracy: {ACC_validation:.4f}')
     print(f'  Precision: {PR_validation:.4f}')
@@ -285,28 +307,30 @@ for fold, (train_ids, val_ids) in enumerate(kfold.split(ruiz_training_datataset)
 finish_time_training = time.time()
 time_training= (finish_time_training - start_time) / 60 
 
-# Extract only the validation losses from the tuples
+# Extract only the validation losses from the list of tuples
 val_losses = [val_loss for _, val_loss in fold_val_losses]
 
 # Calculate the average and standard deviation of the validation losses
 avg_val_loss = np.mean(val_losses)
 std_val_loss = np.std(val_losses)
 
-# Display the average and standard deviation of the validation losses
+# Display the average and standard deviation of the validation losses across all folds
 print(f'Average validation loss across all folds: {avg_val_loss:.7f} ± {std_val_loss:.7f}')
 
 # --------------------------------------------////////// Test Set //////////---------------------------------------------------
 print('//////// Testing ///////')
-# Realizar predicciones usando los cinco modelos
+
+# Make predictions using the models from all five folds
 folds = [1, 2, 3, 4, 5]
 sequences, targets = [], []
 all_scores = []
 start_time_testing = time.time()
 
+# Iterate over the folds to test each model
 for fold in folds:
     weights_file = f"weights/AMP/best_model_weights_fold_{fold}.pth"
     
-    # Realizar la predicción usando el modelo cargado
+    # Make predictions on the test set using the loaded model
     test_sequences, test_target, _, test_pred_csv, test_scores = amp_predict_test(
                                                                                     model,
                                                                                     ruiz_test_dataloader,
@@ -316,15 +340,15 @@ for fold in folds:
                                                                                     has_targets = True
                                                                                 )
     
-    # Almacenar secuencias y targets (solo una vez)
+    # Store the sequences and targets only once (from the first fold)
     if not sequences:
         sequences = test_sequences
         targets = test_target
         
-    # Almacenar las puntuaciones del modelo
+    # Store the scores of the model for each fold
     all_scores.append(test_scores)
 
-# Convertir las predicciones en un DataFrame con scores de cada fold
+# Convert the predictions into a DataFrame with scores from all folds
 df = pd.DataFrame({
     'Sequence': sequences,
     'Target': targets,
@@ -335,20 +359,20 @@ df = pd.DataFrame({
     'Scores model 5': all_scores[4],
 })
 
-# Calcular el promedio y la desviación estándar de las predicciones
+# Calculate the average and standard deviation of predictions across the folds
 df['Average score'] = df[['Scores model 1', 'Scores model 2', 'Scores model 3', 'Scores model 4', 'Scores model 5']].mean(axis=1)
 df['Standard deviation'] = df[['Scores model 1', 'Scores model 2', 'Scores model 3', 'Scores model 4', 'Scores model 5']].std(axis=1)
 
-# Generar predicción redondeada con el threshold
+# Generate final predictions by rounding the average score based on the threshold
 df['Prediction'] = (df['Average score'] >= threshold).astype(int)
 
-# Guardar el DataFrame en un archivo Excel
+# Save the test predictions as an Excel file
 df.to_excel('results/AMP/testing_prediction.xlsx', index=False)
 
 finish_time_testing = time.time()
 time_prediction = (finish_time_testing - start_time_testing) / 60
 
-# Calcular métricas de evaluación
+# Calculate evaluation metrics for the test set
 TP_test, TN_test, FP_test, FN_test, ACC_test, PR_test, \
 SN_test, SP_test, F1_test, mcc_test, roc_auc_test, ap_test = amp_evaluate_model(
                                                                         prediction=df['Average score'].values,
@@ -357,7 +381,7 @@ SN_test, SP_test, F1_test, mcc_test, roc_auc_test, ap_test = amp_evaluate_model(
                                                                         threshold=threshold,
                                                                         device=device
                                                                     )
-
+# Print the test set evaluation metrics
 print(f'///// Testing Metrics: //////')
 print(f'  Accuracy: {ACC_test:.4f}')
 print(f'  Precision: {PR_test:.4f}')
@@ -427,8 +451,8 @@ data = {
     "total_time"
     ],
     "Value": [
-        testing_datataset.num_features,
-        testing_datataset.num_edge_features,
+        ruiz_testing_datataset.num_features,
+        ruiz_testing_datataset.num_edge_features,
         initial_dim_gcn,
         edge_dim_feature ,
         hidden_dim_nn_1 ,
