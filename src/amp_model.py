@@ -15,7 +15,7 @@ class amp_pepmnet(torch.nn.Module):
                 edge_dim_feature,
                 hidden_dim_nn_1,
                 hidden_dim_nn_2,
-
+                
                 hidden_dim_gat_1,
                 
                 hidden_dim_fcn_1,

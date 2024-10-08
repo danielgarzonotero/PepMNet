@@ -35,14 +35,12 @@ class rt_pepmnet(torch.nn.Module):
                                 nn=torch.nn.Sequential(torch.nn.Linear(edge_dim_feature, hidden_dim_nn_2 * hidden_dim_nn_3)),
                                 aggr='add')
         
-        #self.readout = aggr.SumAggregation()
         self.readout_atom = read_out_atom(in_dim=hidden_dim_nn_3)
         
-        #The 7 and 24 comes from the four amino acid features and blosum62 matrix that were concatenated,  95+24
+        #The 8 comes from the amino acid features 
         self.nn_gat_1 = ARMAConv(hidden_dim_nn_3+8, hidden_dim_gat_1, num_stacks = 3, dropout=0, num_layers=7, shared_weights = False ) 
         self.readout_aminoacid = read_out_amino_acid(in_dim=hidden_dim_gat_1)
         
-        #The 7 comes from the four peptides features that were concatenated, +7
         self.linear1 = nn.Linear(hidden_dim_gat_1, hidden_dim_fcn_1)
         self.linear2 = nn.Linear(hidden_dim_fcn_1, hidden_dim_fcn_2 )
         self.linear3 = nn.Linear(hidden_dim_fcn_2, hidden_dim_fcn_3) 
@@ -97,7 +95,6 @@ class rt_pepmnet(torch.nn.Module):
             
             # Readout for peptide representation
             xi = self.readout_aminoacid(xi)
-            #xi = self.readout(xi)
             
             results_list.append(xi)
             

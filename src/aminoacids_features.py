@@ -6,7 +6,6 @@ from rdkit.Chem import Crippen, Descriptors
 
 from sklearn.preprocessing import OneHotEncoder
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
-from src.utils import get_aminoacids
 
 import os
 import torch

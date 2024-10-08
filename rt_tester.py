@@ -13,14 +13,19 @@ from scipy.stats import pearsonr
 from math import sqrt
 import matplotlib.pyplot as plt
 
-
+# Get information about the device (GPU/CPU)
 device_information = device_info()
 device = device_information.device
 batch_size = 100
 threshold = 0.5
-has_targets = True #TODO
+has_targets = True # Set to True if test set has labels (targets). Otherwise, None.
 
-# Cargar los datos de prueba
+# Load/Processing the dataset using GeoDataset_1, specifying the file paths for train and test datasets
+# raw_name: Path to the CSV file containing the data
+# index_x: The column index for the sequences in the CSV file
+# index_y: The column index for the target property (RT of the sequence)
+# has_targets: True (Label) , None (Non Labels)
+
 indep_testing_dataset = GeoDataset_1(
                                     raw_name='data/test_1.csv',
                                     root='',
@@ -29,17 +34,16 @@ indep_testing_dataset = GeoDataset_1(
                                     has_targets=has_targets
                                     )
 
+# Time rounded to 4 decimal places
 finish_time = time.time()
-# Tiempo en segundos redondeado a 4 decimales
 final_time_seconds = round(finish_time - start_time, 3)
-# Tiempo en minutos
 final_time_minutes = round(final_time_seconds / 60, 3)
 print(f'//// Processing Time //// = {final_time_seconds} seconds ({final_time_minutes} minutes)')
 
+# Load the independent-test dataset into a DataLoader
 indep_testing_dataloader = DataLoader(indep_testing_dataset, batch_size, shuffle=False)
 
-# Set up model:
-# Initial Inputs
+# Model configuration
 initial_dim_gcn = indep_testing_dataset.num_features
 edge_dim_feature = indep_testing_dataset.num_edge_features
 
@@ -58,6 +62,7 @@ hidden_dim_fcn_3 = 10
 
 dropout = 0
 
+# Initialize the model
 model = rt_pepmnet(
                 initial_dim_gcn,
                 edge_dim_feature,
@@ -73,16 +78,27 @@ model = rt_pepmnet(
                 dropout
             ).to(device)
 
-weights_file="weights/RT/a1/scx_best_model_weights.pth" #TODO
+# Define the model to import, dataset_name:
+#1) 'hela_mod3' - RPLC
+#2) 'yeast_unmod' - RPLC
+#3) 'scx' - SCX
+#4) 'luna_hilic' - HILIC
+#5) 'luna_silica'- HILIC
+#6) 'atlantis_silica'- HILIC
+#7) 'xbridge_amide'- HILIC
+#8) 'misc_dia' - RPLC
+
+#Path = "weights/RT/a1/{dataset_name}_best_model_weights.pth":
+weights_file="weights/RT/a1/scx_best_model_weights.pth" 
 
 
 if has_targets:
     input_all_inde, target_all, pred_prob_all_inde =  rt_predict_test(  model,
-                                                        indep_testing_dataloader,
-                                                        device,
-                                                        weights_file,
-                                                        has_targets=has_targets
-                                                        )
+                                                                        indep_testing_dataloader,
+                                                                        device,
+                                                                        weights_file,
+                                                                        has_targets=has_targets
+                                                                    )
     
     #Saving a CSV file with prediction values
     prediction_independent_set =   {
@@ -121,7 +137,6 @@ if has_targets:
     
     
     # Visualization: Scatter Plot for Training Set:
-    # Plot a scatter plot of true vs. predicted values on the training set. 
     plt.figure(figsize=(5, 5), dpi=300)
     plt.scatter(target_all.cpu(), pred_prob_all_inde.cpu(), alpha=0.3, color='steelblue')
     plt.plot([min(target_all.cpu()), max(pred_prob_all_inde.cpu())], [min(target_all.cpu()), max(target_all.cpu())], color='steelblue', ls="-", alpha=0.7, linewidth=3.5)
@@ -135,11 +150,12 @@ if has_targets:
     plt.savefig(f'results/Independent/RT/rt_scatter_independent_set.png', format="png", dpi=300, bbox_inches='tight')
     plt.show()
 else:
-    input_all_inde, pred_prob_all_inde =  rt_predict_test(  model,
-                                                        indep_testing_dataloader,
-                                                        device,
-                                                        weights_file,
-                                                        has_targets=has_targets
+    input_all_inde, pred_prob_all_inde =  rt_predict_test(  
+                                                            model,
+                                                            indep_testing_dataloader,
+                                                            device,
+                                                            weights_file,
+                                                            has_targets=has_targets
                                                         )
     
     #Saving a CSV file with prediction values

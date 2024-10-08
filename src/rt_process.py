@@ -51,7 +51,7 @@ def rt_train(model, device, dataloader, optim, epoch):
     return loss_collect    
 
 
-def rt_validation(model, device, dataloader, epoch):
+def rt_test(model, device, dataloader, epoch):
 
     model.eval()
     loss_collect = 0

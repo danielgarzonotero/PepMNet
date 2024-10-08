@@ -42,7 +42,7 @@ final_time_seconds = round(finish_time - start_time, 3)
 final_time_minutes = round(final_time_seconds / 60, 3)
 print(f'//// Processing Time //// = {final_time_seconds} seconds ({final_time_minutes} minutes)')
 
-# Load the test dataset into a DataLoader
+# Load the independent-test dataset into a DataLoader
 indep_testing_dataloader = DataLoader(indep_testing_dataset, batch_size, shuffle=False)
 
 # Model configuration
@@ -232,3 +232,5 @@ if has_targets:
     plt.grid(False)
     plt.savefig(conf_matrix_path)  
     plt.show()
+
+# %%

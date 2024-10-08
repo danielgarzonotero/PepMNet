@@ -141,6 +141,7 @@ def peptide_to_helm(peptide, polymer_id):
 def get_features():
     
     peptides_list_helm = []
+    #Sample sequences to optimize the calculation of nodes and edges features. 
     sequence_list = [
     "WNSLKIDNLDA",
     "RIPVMMNWYW",
@@ -305,6 +306,21 @@ def get_edge_indices(molecule):
 
 #Getting the edges of the peptidic bonds
 def get_non_peptide_idx(molecule):
+    """
+    Identifies and returns a list of non-peptide bond indices in a given molecule.
+    
+    This function iterates through the bonds of the molecule and evaluates various atomic properties
+    to determine if each bond is non-peptidic. It checks the atomic numbers, hybridization,
+    neighbors, and hydrogen counts of the atoms involved in each bond. Bonds that do not meet the
+    criteria for peptide bonds are added to a list, which is returned as a list of tuples
+    containing the indices of the atoms forming these bonds.    
+    
+    Parameters:
+        molecule (rdkit.Chem.Mol): The RDKit molecule representation to be analyzed.
+    
+    Returns:
+        list: A list of tuples, where each tuple contains the indices of atoms forming non-peptide bonds.
+    """
     edges_nonpeptidic= []
     for bond in molecule.GetBonds():
         atom1 = bond.GetBeginAtom()
@@ -349,10 +365,24 @@ def get_non_peptide_idx(molecule):
     
     return  edges_nonpeptidic
 
-
 #Getting the label of the atoms based on the aminoacids e.g: ABC --> [1,1,1,2,2,2,2,2,3,3,3,3,3,3,3]
 def get_label_aminoacid_atoms(edges_peptidic, edges_nonpeptidic, molecule):
-    
+    """
+    Labels atoms in a molecule based on the provided peptide and non-peptide edges.
+
+    This function identifies the unique bonds between peptide and non-peptide components 
+    using symmetric difference set operations. It then fragments the molecule at these 
+    unique bonds and assigns an index to each atom based on the fragment it belongs to.
+
+    Parameters:
+        edges_peptidic (list of tuples): A list of tuples representing edges in peptide components.
+        edges_nonpeptidic (list of tuples): A list of tuples representing edges in non-peptide components.
+        molecule (rdkit.Chem.Mol): The RDKit molecule representation to be processed.
+
+    Returns:
+        torch.Tensor: A tensor containing the fragment indices for each atom in the molecule, 
+        indicating which fragment each atom belongs to.
+    """
     set_with = set(edges_peptidic)
     set_witout = set(edges_nonpeptidic)
     tuplas_diferentes = list( set_with.symmetric_difference(set_witout))
@@ -379,51 +409,16 @@ def get_label_aminoacid_atoms(edges_peptidic, edges_nonpeptidic, molecule):
     
 
 #Aminoacids Features
-
-#To create aminoacid dictionary
-def split_sequence_for_Helm(peptide):
-    sequence = peptide.replace("(ac)", "[ac].").replace("_", "").replace("1", "").replace("2", "").replace("3", "").replace("4", "")
-    sequence = "".join(sequence)
-    
-    sequence = ''.join([c + '.' if c.isupper() else c for i, c in enumerate(sequence)])
-    sequence = sequence.rstrip('.')
-    
-    split_list = []
-    temp = ''
-    skip_next = False
-
-    for i in range(len(sequence)):
-        if skip_next:
-            skip_next = False
-            continue
-
-        if sequence[i] == ']':
-            temp += sequence[i]
-            if i < len(sequence) - 1 and sequence[i + 1] == '.':
-                temp += '.'
-                skip_next = True
-        elif sequence[i] == '.':
-            if temp:
-                split_list.append(temp)
-                temp = ''
-        else:
-            temp += sequence[i]
-
-    if temp:
-        split_list.append(temp)
-        
-    return split_list
-
-
-#Gives the aminoacids given a peptide
-def get_aminoacids(sequence):
-    aminoacids_list = []
-    for i, sequence in enumerate(sequence):
-        aminoacids_list.extend(split_sequence_for_Helm(sequence))
-    
-    return aminoacids_list
-
 def get_aminoacids_2(peptide):
+    """
+    This function processes a peptide sequence by performing several string manipulations:
+    The function returns a list of amino acids or sequence components, preserving the intended structure of the peptide.
+    Args:
+    peptide (str): The input peptide sequence.
+    
+    Returns:
+    list: A list of processed amino acids or modifications.
+    """
     sequence = peptide.replace("(ac)", "[ac]*").replace("_", "").replace("1", "").replace("2", "").replace("3", "").replace("4", "")
     sequence_helm = "".join(sequence)
     
@@ -446,6 +441,7 @@ def get_molecule(amino):
     
     return molecule 
 
+#BLOSUM
 def get_sequence(peptide):
     sequence = peptide.replace("(ac)", "[ac].").replace("_", "").replace("1", "").replace("2", "").replace("3", "").replace("4", "")
     
@@ -465,5 +461,3 @@ def construir_matriz_caracteristicas(sequence):
             matriz_caracteristicas[j, i] = puntuacion
 
     return matriz_caracteristicas.T
-
-# %%

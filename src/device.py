@@ -3,7 +3,7 @@ import torch
 class device_info:
     def __init__(self):
         if torch.cuda.is_available():
-            self.device = torch.device("cuda:1")
+            self.device = torch.device("cuda:0")
             self.device_str = "\n ///////// Running on the GPU /////////"
         else:
             self.device = torch.device("cpu")
