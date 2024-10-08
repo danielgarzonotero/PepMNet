@@ -1,60 +1,3 @@
-#%%
-import pandas as pd
-import matplotlib.pyplot as plt
-from scipy.stats import pearsonr, spearmanr
-
-# Cargar el archivo Excel (asegúrate de tener instalada la librería openpyxl si tu archivo es .xlsx)
-df = pd.read_excel('indep_testing_predictions.xlsx')
-
-# Calcular el error absoluto entre Target y Average score
-df['Absolute Error'] = abs(df['Target'] - df['Average score'])
-
-# Calcular correlaciones de Pearson y Spearman
-pearson_corr, _ = pearsonr(df['Standard deviation'], df['Absolute Error'])
-spearman_corr, _ = spearmanr(df['Standard deviation'], df['Absolute Error'])
-
-# Crear el scatter plot con ajustes de etiquetas y tamaños
-plt.figure(figsize=(8, 7))  # Aumenta el tamaño de la figura
-scatter = plt.scatter(df['Standard deviation'], df['Absolute Error'], color='steelblue', alpha=0.7, label='Data Points')
-
-# Ajustar etiquetas de los ejes con tamaños de fuente más grandes
-plt.xlabel('Standard Deviation of Ensamble Scores', fontsize=18)
-plt.ylabel('Absolute Error', fontsize=18)
-plt.title('Scatter Plot of Absolute Error vs. Standard Deviation', fontsize=18, pad=12)
-
-# Ajustar el tamaño de los números en los ejes
-plt.xticks(fontsize=18)
-plt.yticks(fontsize=18)
-
-# Añadir leyenda con las correlaciones de Pearson y Spearman y ajustar el tamaño de la fuente
-plt.legend(title=f'Pearson: {pearson_corr:.2f}\nSpearman: {spearman_corr:.2f}', fontsize=18, title_fontsize=18, loc='lower right')
-
-# Mostrar grid
-plt.grid(True)
-
-# Mostrar el gráfico
-plt.show()
-
-# Calcular la media y la desviación estándar del error absoluto
-mean_abs_error = df['Absolute Error'].mean()
-std_abs_error = df['Absolute Error'].std()
-
-# Crear el histograma del error absoluto
-plt.figure(figsize=(8, 6))
-plt.hist(df['Absolute Error'], bins=20, color='lightcoral', alpha=0.7, edgecolor='black')
-
-# Añadir la media y la desviación estándar en la leyenda
-plt.axvline(mean_abs_error, color='blue', linestyle='dashed', linewidth=1.5, label=f'Mean: {mean_abs_error:.4f}\nStandart Deviation: {std_abs_error:.4f}')
-
-# Etiquetas y título del histograma
-plt.xlabel('Absolute Error', fontsize=18)
-plt.ylabel('Frequency', fontsize=18)
-plt.title('Histogram of Absolute Error', fontsize=18, pad=12)
-plt.xticks(fontsize=18)
-plt.yticks(fontsize=18)
-plt.legend(fontsize=14)
-plt.grid(True)
-plt.show()
 
 #%%
 
@@ -63,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Cargar el archivo Excel (reemplaza 'indep_testing_predictions.xlsx' con la ruta correcta)
-df = pd.read_excel('indep_testing_predictions.xlsx')
+df = pd.read_excel('ensemble_testing_prediction.xlsx')
 
 # Extraer los puntajes de los modelos (columnas 3 a 7)
 model_scores = df[['Scores model 1', 'Scores model 2', 'Scores model 3', 'Scores model 4', 'Scores model 5']]
@@ -106,7 +49,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Cargar el archivo CSV (reemplaza 'indep_testing_predictions.xlsx' con la ruta correcta)
-df = pd.read_excel('indep_testing_predictions.xlsx')
+df = pd.read_excel('ensemble_testing_prediction.xlsx')
 
 # Extraer la columna de desviación estándar
 std_devs = df['Standard deviation']

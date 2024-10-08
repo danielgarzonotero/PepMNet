@@ -6,7 +6,7 @@ from sklearn.metrics import roc_auc_score, average_precision_score, confusion_ma
 from sklearn.metrics import matthews_corrcoef
 
 # Ruta del archivo (puede ser CSV o Excel)
-file_path = '/home/vvd9fd/Documents/Bilodeau Group/Codes/0.Research/Hierarchical-Graph-Neural-Network/results/AMP/a/testing_prediction' #name of the file without extension
+file_path = 'ensemble_testing_prediction' #name of the file without extension
 
 try:
     df = pd.read_csv(f"{file_path}.csv")
@@ -21,12 +21,10 @@ except Exception as e:
         print(f"Error loading Excel: {e}")
         raise ValueError("Both CSV and Excel file loading failed.")
 
-# Ensure that the columns exist in the Excel file
-assert 'Target' in df.columns and 'Scores' in df.columns, "The columns Target and Scores must be present in the file."
 
 # Get the true labels and prediction scores
 y_true = df['Target'].values
-y_scores = df['Scores'].values
+y_scores = df['Average score'].values
 
 # Round the predictions to 0 or 1
 # Define the threshold
