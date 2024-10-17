@@ -135,7 +135,7 @@ fold_val_losses = []
 # Classification threshold for AMP prediction:
 threshold = 0.5
 # Seed values for each fold to ensure reproducibility:
-seeds = [0,3,9,1,21]
+seeds = [0,1,3,6,21]
 
 # Iterate over the K-Folds
 for fold, (train_ids, val_ids) in enumerate(kfold.split(ruiz_training_datataset)):

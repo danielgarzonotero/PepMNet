@@ -28,7 +28,7 @@ has_targets = True  # Set to True if test set has labels (targets). Otherwise, N
 # has_targets: True (Label) , None (Non Labels)
 
 indep_testing_dataset = GeoDataset_1(
-                                    raw_name='data/test_3.csv',
+                                    raw_name='data/AMP/dataset Ruiz/Test_clean.csv',
                                     root='',
                                     index_x=0,
                                     index_y=1,
