@@ -11,38 +11,42 @@ from torch_scatter import scatter
 #Hierarchical Graph Neural Network
 class amp_pepmnet(torch.nn.Module):
     def __init__(self,
-                initial_dim_gcn,
-                edge_dim_feature,
-                hidden_dim_nn_1,
-                hidden_dim_nn_2,
+                initial_dim_gcn, # Input feature dimension for the GCN layers
+                edge_dim_feature, # Edge feature dimension
+                hidden_dim_nn_1, # Hidden layer dimension for the first NNConv
+                hidden_dim_nn_2, # Hidden layer dimension for the second NNConv
                 
-                hidden_dim_gat_1,
+                hidden_dim_gat_1, # Hidden layer dimension for the ARMAConv layer
                 
-                hidden_dim_fcn_1,
-                hidden_dim_fcn_2,
-                hidden_dim_fcn_3,
+                hidden_dim_fcn_1, # Hidden layer dimension for the first fully connected layer
+                hidden_dim_fcn_2, # Hidden layer dimension for the second fully connected layer
+                hidden_dim_fcn_3, # Hidden layer dimension for the third fully connected layer
                 dropout):
         super(amp_pepmnet, self).__init__()
 
+        # First graph convolution layer (NNConv)
         self.nn_conv_1 = NNConv(initial_dim_gcn, hidden_dim_nn_1,
                                 nn=torch.nn.Sequential(torch.nn.Linear(edge_dim_feature, initial_dim_gcn * hidden_dim_nn_1)), 
                                 aggr='add' )
         
+        # Second graph convolution layer (NNConv)
         self.nn_conv_2 = NNConv(hidden_dim_nn_1, hidden_dim_nn_2,
                                 nn=torch.nn.Sequential(torch.nn.Linear(edge_dim_feature, hidden_dim_nn_1 * hidden_dim_nn_2)), 
                                 aggr='add')
         
         self.readout_atom = atom_readout()
         
-        #The 8 amino acid features that were concatenated
+        # ARMAConv layer for graph convolution at the amino acid level
+        # The "8" is added to the feature dimension when amino acid features are concatenated
         self.nn_gat_1 = ARMAConv(hidden_dim_nn_2+8, hidden_dim_gat_1, num_stacks = 3, dropout=0.3, num_layers=7, shared_weights = False ) 
+        
         self.readout_aminoacid = amino_acid_readout()
         
-        
+        # Fully connected layers for the final prediction
         self.linear1 = nn.Linear(hidden_dim_gat_1, hidden_dim_fcn_1)
         self.linear2 = nn.Linear(hidden_dim_fcn_1, hidden_dim_fcn_2 )
         self.linear3 = nn.Linear(hidden_dim_fcn_2, hidden_dim_fcn_3) 
-        self.linear4 = nn.Linear(hidden_dim_fcn_3, 1)
+        self.linear4 = nn.Linear(hidden_dim_fcn_3, 1) # Output layer for final prediction
         
         
         self.dropout = nn.Dropout(dropout)
@@ -68,16 +72,18 @@ class amp_pepmnet(torch.nn.Module):
         
         for i in range(len(cc)): 
             
-            cc_i = cc[i].item()
-            mask = idx_batch == i
-            xi = x[mask]
-            monomer_labels_i = monomer_labels[mask]
+            cc_i = cc[i].item() # Get the current component ID
+            mask = idx_batch == i # Get the mask for the current batch
+            xi = x[mask] # Select the corresponding atom features
+            monomer_labels_i = monomer_labels[mask] # Get monomer labels for the current batch
             
+            # Getting amino acids representation from atom features
+            xi = self.readout_atom(xi, monomer_labels_i)
+            
+            # Concatenate amino acid features if they exist
+            # Comment out the following 3 lines if you are not using amino acid feature concatenation
             aminoacid_ft_tupla = [tupla for tupla in aminoacids_features if tupla[0] == cc_i]
             aminoacids_features_i = aminoacid_ft_tupla[0][1]
-            
-            # getting amino acids representation from atom features
-            xi = self.readout_atom(xi, monomer_labels_i)
             xi = torch.cat((xi, aminoacids_features_i), dim=1)
             
             amino_index_tupla = [tupla for tupla in amino_index if tupla[0] == cc_i]
@@ -91,7 +97,8 @@ class amp_pepmnet(torch.nn.Module):
             xi = self.readout_aminoacid(xi)
             
             results_list.append(xi)
-            
+        
+        # Concatenate all peptide representations into a single tensor   
         p = torch.cat(results_list, dim=0)
         
         p = self.dropout(p)    
