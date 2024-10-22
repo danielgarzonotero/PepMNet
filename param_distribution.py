@@ -6,14 +6,14 @@ import os
 
 # Lista de nombres de archivos de pesos
 model_paths = [
-    "weights_RT/a1/atlantis_silica_best_model_weights.pth",
-    "weights_RT/a1/hela_mod3_best_model_weights.pth",
-    "weights_RT/a1/luna_hilic_best_model_weights.pth",
-    "weights_RT/a1/luna_silica_best_model_weights.pth",
-    "weights_RT/a1/misc_dia_best_model_weights.pth",
-    "weights_RT/a1/scx_best_model_weights.pth",
-    "weights_RT/a1/xbridge_amide_best_model_weights.pth",
-    "weights_RT/a1/yeast_unmod_best_model_weights.pth",
+    "weights/RT/a1/atlantis_silica_best_model_weights.pth",
+    "weights/RT/a1/hela_mod3_best_model_weights.pth",
+    "weights/RT/a1/luna_hilic_best_model_weights.pth",
+    "weights/RT/a1/luna_silica_best_model_weights.pth",
+    "weights/RT/a1/misc_dia_best_model_weights.pth",
+    "weights/RT/a1/scx_best_model_weights.pth",
+    "weights/RT/a1/xbridge_amide_best_model_weights.pth",
+    "weights/RT/a1/yeast_unmod_best_model_weights.pth",
 ]
 
 # Función para extraer el nombre del modelo a partir del path
@@ -87,11 +87,11 @@ import numpy as np
 
 # Lista de nombres de archivos de pesos
 model_paths = [
-    "weights_AMP/model_0_3_9_1_21/best_model_weights_fold_1.pth",
-    "weights_AMP/model_0_3_9_1_21/best_model_weights_fold_2.pth",
-    "weights_AMP/model_0_3_9_1_21/best_model_weights_fold_3.pth",
-    "weights_AMP/model_0_3_9_1_21/best_model_weights_fold_4.pth",
-    "weights_AMP/model_0_3_9_1_21/best_model_weights_fold_5.pth"
+    "weights/AMP/model_0_3_9_1_21/best_model_weights_fold_1.pth",
+    "weights/AMP/model_0_3_9_1_21/best_model_weights_fold_2.pth",
+    "weights/AMP/model_0_3_9_1_21/best_model_weights_fold_3.pth",
+    "weights/AMP/model_0_3_9_1_21/best_model_weights_fold_4.pth",
+    "weights/AMP/model_0_3_9_1_21/best_model_weights_fold_5.pth"
 ]
 
 # Función para cargar pesos y sesgos de un modelo
