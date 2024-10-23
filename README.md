@@ -130,4 +130,8 @@ To test independent sequences or datasets for retention time (RT) prediction. Us
 To retrain the model or reprocess the datasets, please refer to the scripts [`amp_main.py`](https://github.com/danielgarzonotero/PepMNet/blob/main/amp_main.py) for antimicrobial peptide classification and [`rt_main.py`](https://github.com/danielgarzonotero/PepMNet/blob/main/rt_main.py) for retention time prediction. These scripts handle the full training process, including data preprocessing, model configuration, and training. You can adjust hyperparameters, dataset paths, and other settings within the scripts to suit your specific requirements.
 
 
+## Citation
 
+If you use this code or refer to this work in your research, please cite the following paper:
+
+**Garzon D, Akbari O, Bilodeau C.** *PepMNet: A Hybrid Deep Learning Model for Predicting Peptide Properties Using Hierarchical Graph Representations.* ChemRxiv. 2024; doi:10.26434/chemrxiv-2024-qvhhd. This content is a preprint and has not been peer-reviewed.

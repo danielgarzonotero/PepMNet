@@ -10,8 +10,4 @@ weights/AMP/
 
 
 
-## Citation
 
-If you use this code or refer to this work in your research, please cite the following paper:
-
-**Garzon D, Akbari O, Bilodeau C.** *PepMNet: A Hybrid Deep Learning Model for Predicting Peptide Properties Using Hierarchical Graph Representations.* ChemRxiv. 2024; doi:10.26434/chemrxiv-2024-qvhhd. This content is a preprint and has not been peer-reviewed.
