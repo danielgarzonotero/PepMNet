@@ -132,7 +132,7 @@ To retrain the model or reprocess the datasets, please refer to the scripts [`am
 
 ## Citation
 
-If you use this code or refer to this work in your research, please cite the following ['paper'](https://pubs.rsc.org/en/content/articlelanding/2025/me/d4me00172a) :
+If you use this code or refer to this work in your research, please cite the following [paper](https://pubs.rsc.org/en/content/articlelanding/2025/me/d4me00172a) :
 
 ```bash
 Garzon Otero, D.; Akbari, O.; Bilodeau, C. PepMNet: A Hybrid Deep Learning Model for
