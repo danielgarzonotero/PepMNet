@@ -132,6 +132,10 @@ To retrain the model or reprocess the datasets, please refer to the scripts [`am
 
 ## Citation
 
-If you use this code or refer to this work in your research, please cite the following paper:
+If you use this code or refer to this work in your research, please cite the following ['paper'](https://pubs.rsc.org/en/content/articlelanding/2025/me/d4me00172a) :
 
-**Garzon D, Akbari O, Bilodeau C.** *PepMNet: A Hybrid Deep Learning Model for Predicting Peptide Properties Using Hierarchical Graph Representations.* ChemRxiv. 2024; doi:10.26434/chemrxiv-2024-qvhhd. This content is a preprint and has not been peer-reviewed.
+```bash
+Garzon Otero, D.; Akbari, O.; Bilodeau, C. PepMNet: A Hybrid Deep Learning Model for
+Predicting Peptide Properties Using Hierarchical Graph Representations. Mol. Syst. Des.
+Eng. 2025, 10.1039.D4ME00172A. https://doi.org/10.1039/D4ME00172A.
+```
